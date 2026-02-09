@@ -1,7 +1,7 @@
 # Task Management Console Application
 
 ## Table of Contents
-- [Overview](#overview)
+- [Project Overview](#project-overview)
 - [Features](#features)
 - [System Requirements](#system-requirements)
 - [Installation](#installation)
@@ -9,21 +9,22 @@
 - [Usage Guide](#usage-guide)
 - [Command Reference](#command-reference)
 - [Data Storage](#data-storage)
+- [Testing](#testing)
 - [Development](#development)
+- [Project Structure](#project-structure)
 - [Contributing](#contributing)
 - [License](#license)
 - [Support](#support)
 
-## Overview
+## Project Overview
 
-The Task Management Console Application is a robust, Java-based command-line tool 
-designed for efficient task organization and management. Built with Java 8 and 
-following object-oriented design principles, this application provides a comprehensive 
-solution for creating, tracking, and managing tasks through a console interface without 
-external dependencies or graphical user interfaces.
+The Task Management Console Application is a Java-based command-line tool designed for 
+efficient task organization and management. Built with Java 8 and following object-oriented 
+design principles, this application provides a comprehensive solution for creating, tracking, 
+and managing tasks through a console interface without external dependencies.
 
 This application is ideal for developers, technical users, and anyone preferring command-line 
-tools for productivity management. It offers enterprise-grade validation, automatic data persistence, 
+tools for productivity management. It offers robust validation, automatic data persistence, 
 and a clean, intuitive interface.
 
 **Repository**: https://github.com/Naoyuki-Christopher-H/task-management-console-java.git
@@ -35,19 +36,19 @@ and a clean, intuitive interface.
 - **Advanced Validation**: Comprehensive input validation for dates, priorities, and statuses
 - **Automatic Persistence**: CSV-based file storage with automatic loading and saving
 - **Cross-Platform Compatibility**: Native operation on Windows, Linux, and macOS
-- **Memory-Efficient Architecture**: Optimized in-memory storage with intelligent file backup
+- **Memory-Efficient Architecture**: Optimized in-memory storage with file backup
 
 ### User Experience
-- **Intuitive Command Interface**: Simple, consistent command syntax
+- **Intuitive Command Interface**: Simple, consistent command syntax with aliases
 - **Clear Console Display**: Built-in screen clearing capability
 - **Comprehensive Help System**: Detailed command reference and examples
 - **Formatted Output**: Well-structured task display with statistics
 
 ### Technical Excellence
 - **Object-Oriented Design**: Clean separation of concerns and modular architecture
-- **Robust Error Handling**: Informative error messages with recovery guidance
-- **Performance Optimized**: Efficient memory management and file I/O operations
+- **Comprehensive Testing**: Complete JUnit 4 test suite with 247 unit tests
 - **Code Quality**: Allman style formatting with comprehensive documentation
+- **Robust Error Handling**: Informative error messages with recovery guidance
 
 ## System Requirements
 
@@ -64,24 +65,9 @@ and a clean, intuitive interface.
 - **Storage**: 100 MB available disk space
 - **Terminal**: Modern terminal emulator with UTF-8 support
 
-### Development Requirements
-- **Apache Maven 3.6.0** or higher (for building from source)
-- **Git** (for source code management)
-- **Text Editor** or IDE with Java support
-
 ## Installation
 
-### Option 1: Download Pre-built JAR
-
-1. Download the latest release JAR file from the Releases page
-2. Place the JAR file in your preferred directory
-3. Open terminal/command prompt in that directory
-4. Run the application:
-   ```bash
-   java -jar task-management-console-java-V-1.0.0.jar
-   ```
-
-### Option 2: Build from Source
+### Option 1: Build from Source
 
 #### Step 1: Clone the Repository
 ```bash
@@ -97,6 +83,9 @@ mvn clean
 # Compile the project
 mvn compile
 
+# Run tests
+mvn test
+
 # Create executable JAR
 mvn package
 ```
@@ -107,10 +96,15 @@ After successful build, you'll find the executable JAR at:
 target/task-management-console-java-V-1.0.0.jar
 ```
 
-### Option 3: Run Directly with Maven
+### Option 2: Run Directly with Maven
 ```bash
 # Run without packaging
-mvn compile exec:java -Dexec.mainClass="Solution.TaskManagementConsoleJava"
+mvn exec:java -Dexec.mainClass="Solution.TaskManagementConsoleJava"
+```
+
+### Option 3: Run from Executable JAR
+```bash
+java -jar target/task-management-console-java-V-1.0.0.jar
 ```
 
 ## Quick Start
@@ -172,19 +166,6 @@ Application terminated. Goodbye!
 
 ## Usage Guide
 
-### Application Structure
-
-The application follows a modular architecture:
-
-```
-Solution/
-├── TaskManagementConsoleJava.java  # Main application controller
-├── Task.java                       # Data model with validation
-├── TaskManager.java                # Business logic core
-├── CommandParser.java              # Input parsing and validation
-└── FileHandler.java                # File I/O operations
-```
-
 ### Task Attributes
 
 Each task contains the following attributes:
@@ -217,21 +198,21 @@ Each task contains the following attributes:
 #### CREATE Command
 Creates a new task with specified attributes.
 
-**Syntax:**
+**Syntax**:
 ```
 create "description", PRIORITY, YYYY-MM-DD
 ```
 
-**Aliases:** `add`
+**Aliases**: `add`
 
-**Examples:**
+**Examples**:
 ```bash
 > create "Complete assignment", HIGH, 2024-12-15
 > create "Buy groceries", LOW, 2024-03-20
 > create "Schedule team meeting", MEDIUM, 2024-03-25
 ```
 
-**Parameters:**
+**Parameters**:
 - `description`: Task description (use quotes for multi-word descriptions)
 - `PRIORITY`: Importance level (LOW, MEDIUM, HIGH)
 - `YYYY-MM-DD`: Due date in ISO format
@@ -239,20 +220,20 @@ create "description", PRIORITY, YYYY-MM-DD
 #### UPDATE Command
 Modifies existing task attributes.
 
-**Syntax:**
+**Syntax**:
 ```
 update SUBCOMMAND TASK_ID VALUE
 ```
 
-**Aliases:** `change`
+**Aliases**: `change`
 
-**Subcommands:**
+**Subcommands**:
 - `status`: Update task status (To Do, Doing, Done)
 - `desc` or `description`: Update task description
 - `priority`: Update task priority (LOW, MEDIUM, HIGH)
 - `due` or `duedate`: Update due date (YYYY-MM-DD)
 
-**Examples:**
+**Examples**:
 ```bash
 > update status 1 Doing
 > update desc 2 "Updated meeting agenda"
@@ -263,14 +244,14 @@ update SUBCOMMAND TASK_ID VALUE
 #### REMOVE Command
 Deletes a task from the system.
 
-**Syntax:**
+**Syntax**:
 ```
 remove TASK_ID
 ```
 
-**Aliases:** `delete`
+**Aliases**: `delete`
 
-**Examples:**
+**Examples**:
 ```bash
 > remove 1
 > delete 3
@@ -281,14 +262,14 @@ remove TASK_ID
 #### LIST Command
 Displays tasks with optional filtering.
 
-**Syntax:**
+**Syntax**:
 ```
 list [STATUS_FILTER]
 ```
 
-**Aliases:** `show`
+**Aliases**: `show`
 
-**Examples:**
+**Examples**:
 ```bash
 # Show all tasks
 > list
@@ -299,7 +280,7 @@ list [STATUS_FILTER]
 > list Done
 ```
 
-**Output Format:**
+**Output Format**:
 ```
 === Tasks ===
 To Do: 3 | Doing: 2 | Done: 5 | Total: 10
@@ -314,19 +295,23 @@ ID: 2 | Description: Team meeting           | Priority: MEDIUM | Due: 2024-03-25
 #### CLEAR Command
 Clears the console screen while preserving all task data.
 
-**Syntax:**
+**Syntax**:
 ```
 clear
 ```
 
-**Aliases:** `cls`
+**Aliases**: `cls`
 
-**Note:** This command only affects the display, not the stored data.
+**Examples**:
+```bash
+> clear
+Console cleared. Task data preserved in memory.
+```
 
 #### HELP Command
-Displays comprehensive command reference and usage examples.
+Displays comprehensive command reference.
 
-**Syntax:**
+**Syntax**:
 ```
 help
 ```
@@ -334,12 +319,19 @@ help
 #### EXIT Command
 Terminates the application and saves all tasks to file.
 
-**Syntax:**
+**Syntax**:
 ```
 exit
 ```
 
-**Aliases:** `quit`
+**Aliases**: `quit`
+
+**Examples**:
+```bash
+> exit
+Tasks saved to file.
+Application terminated. Goodbye!
+```
 
 ## Data Storage
 
@@ -363,81 +355,119 @@ ID,Description,Priority,DueDate,Status
 - **Data Integrity**: File operations include validation and error recovery
 - **Backup**: Consider regular backups of the `tasks.csv` file
 
-### Backup Recommendations
+## Testing
 
-1. **Manual Backup**: Copy `tasks.csv` to a backup location regularly
-2. **Version Control**: Add `tasks.csv` to your version control system (excluding sensitive data)
-3. **Synchronization**: Use cloud storage or sync services for automatic backup
+### Test Suite
+
+The application includes a comprehensive JUnit 4 test suite with 247 unit tests:
+
+- **TaskTest.java**: 87 tests - Task entity unit tests
+- **TaskManagerTest.java**: 46 tests - Business logic tests
+- **CommandParserTest.java**: 42 tests - Command parsing tests
+- **FileHandlerTest.java**: 41 tests - File I/O tests
+- **TaskManagementConsoleJavaTest.java**: 31 tests - Integration tests
+
+### Running Tests
+
+```bash
+# Run all tests
+mvn test
+
+# Run specific test class
+mvn test -Dtest=TaskTest
+
+# Generate test reports
+mvn surefire-report:report
+```
+
+### Test Reports
+
+Test reports are generated in:
+```
+target/surefire-reports/
+```
 
 ## Development
+
+### Building the Project
+
+```bash
+# Clean and build
+mvn clean compile
+
+# Create JAR file
+mvn package
+
+# Install to local repository
+mvn install
+```
+
+### Code Standards
+
+- **Braces**: Allman style (opening braces on new lines)
+- **Naming**: PascalCase for classes, camelCase for methods and variables
+- **Documentation**: Javadoc comments for all public methods
+- **Error Handling**: Use specific exception types with informative messages
 
 ### Project Structure
 
 ```
 task-management-console-java/
 ├── src/main/java/Solution/          # Source code
-│   ├── TaskManagementConsoleJava.java
-│   ├── Task.java
-│   ├── TaskManager.java
-│   ├── CommandParser.java
-│   └── FileHandler.java
-├── src/main/resources/              # Configuration files
-├── target/                          # Build output
+│   ├── TaskManagementConsoleJava.java  # Main application controller
+│   ├── Task.java                       # Data model with validation
+│   ├── TaskManager.java                # Business logic core
+│   ├── CommandParser.java              # Input parsing and validation
+│   └── FileHandler.java                # File I/O operations
+├── src/test/java/Solution/          # Test source code
+│   ├── TaskTest.java                # 87 tests - Task entity unit tests
+│   ├── TaskManagerTest.java         # 46 tests - Business logic tests
+│   ├── CommandParserTest.java       # 42 tests - Command parsing tests
+│   ├── FileHandlerTest.java         # 41 tests - File I/O tests
+│   └── TaskManagementConsoleJavaTest.java  # 31 tests - Integration tests
 ├── pom.xml                          # Maven configuration
 ├── tasks.csv                        # Data file (created at runtime)
-├── README.md                        # This file
-└── Documentation/                   # Detailed documentation
-    └── DOCUMENTATION.md
+└── README.md                        # This documentation file
 ```
 
-### Building and Testing
+### Key Classes
 
-#### Compile and Run
-```bash
-# Compile only
-mvn compile
+1. **TaskManagementConsoleJava**: Main application controller handling user interaction
+2. **Task**: Data model representing a task entity with validation logic
+3. **TaskManager**: Business logic layer for task management operations
+4. **CommandParser**: Input validation and command processing component
+5. **FileHandler**: Data persistence layer for file operations
 
-# Run tests
-mvn test
+## Project Structure
 
-# Create JAR package
-mvn package
+### Source Code Organization
 
-# Run with Maven
-mvn exec:java -Dexec.mainClass="Solution.TaskManagementConsoleJava"
-```
+**Main Classes**:
+- `TaskManagementConsoleJava.java`: Application entry point and controller
+- `Task.java`: Task data model with validation and CSV serialization
+- `TaskManager.java`: Business logic for task operations
+- `CommandParser.java`: Command parsing and validation
+- `FileHandler.java`: File I/O for data persistence
 
-#### Code Quality Checks
-```bash
-# Check code style
-# (Add appropriate plugins to pom.xml for checkstyle/pmd)
+**Test Classes**:
+- `TaskTest.java`: Comprehensive unit tests for Task class
+- `TaskManagerTest.java`: Unit tests for business logic
+- `CommandParserTest.java`: Tests for command parsing
+- `FileHandlerTest.java`: Tests for file operations
+- `TaskManagementConsoleJavaTest.java`: Integration tests
 
-# Generate documentation
-mvn javadoc:javadoc
-```
+### Build Configuration
 
-### Extending the Application
+**pom.xml**:
+- Java 8 compatibility
+- JUnit 4.13.2 dependency for testing
+- Maven plugins for compilation, packaging, and testing
+- Executable JAR configuration with main class specification
 
-#### Adding New Commands
-1. Extend `CommandParser.java` to recognize new commands
-2. Add command handling in `TaskManagementConsoleJava.java`
-3. Implement business logic in `TaskManager.java` if needed
-4. Update help documentation
+### Data Files
 
-#### Adding New Task Attributes
-1. Modify `Task.java` to add new fields
-2. Update validation logic
-3. Modify CSV serialization in `Task.java`
-4. Update `FileHandler.java` for persistence
-5. Add corresponding update commands
-
-### Coding Standards
-
-- **Braces**: Allman style (opening braces on new lines)
-- **Naming**: PascalCase for classes, camelCase for methods and variables
-- **Documentation**: Javadoc comments for all public methods
-- **Error Handling**: Use specific exception types with informative messages
-- **Validation**: Validate all inputs at method boundaries
+- `tasks.csv`: Primary data storage (created automatically)
+- Test data files: Created and cleaned up during testing
 
 ## Contributing
 
@@ -476,14 +506,6 @@ mvn javadoc:javadoc
 - **Commit Messages**: Use clear, descriptive commit messages
 - **Scope**: Keep changes focused and manageable
 
-### Development Workflow
-
-1. **Issue Tracking**: Check existing issues before starting work
-2. **Discussion**: Discuss major changes via Issues or Discussions
-3. **Implementation**: Code with tests and documentation
-4. **Review**: Submit for code review
-5. **Integration**: Merge after approval and testing
-
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
@@ -499,15 +521,16 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ### Third-Party Components
 - **Java Standard Library**: Oracle Binary Code License
 - **Apache Maven**: Apache License 2.0
+- **JUnit 4**: Eclipse Public License 1.0
 - All dependencies are standard Java libraries with permissive licenses
 
 ## Support
 
 ### Getting Help
 
-- **Documentation**: Start with this README and the detailed documentation in `Documentation/DOCUMENTATION.md`
+- **Documentation**: Start with this README
 - **GitHub Issues**: Report bugs or request features via GitHub Issues
-- **GitHub Discussions**: Ask questions and share ideas in Discussions
+- **GitHub Repository**: https://github.com/Naoyuki-Christopher-H/task-management-console-java.git
 
 ### Common Issues and Solutions
 
@@ -539,12 +562,5 @@ When reporting issues, please include:
 5. **Expected Behavior**: What should happen
 6. **Actual Behavior**: What actually happens
 7. **Error Messages**: Complete error output
-
-### Feature Requests
-
-We welcome feature requests! Please submit them via GitHub Issues with:
-- **Use Case**: How the feature would be used
-- **Benefit**: What problem it solves
-- **Implementation Ideas**: Suggested approach (optional)
 
 ---
