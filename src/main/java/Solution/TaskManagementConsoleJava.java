@@ -98,6 +98,11 @@ public class TaskManagementConsoleJava
                 handleRemoveCommand(args);
                 break;
                 
+            case "clear":
+            case "cls":
+                handleClearCommand();
+                break;
+                
             case "help":
                 printHelp();
                 break;
@@ -291,12 +296,55 @@ public class TaskManagementConsoleJava
     }
     
     /**
+     * Handles clear screen command.
+     * Clears the console window while preserving all task data in memory.
+     */
+    private void handleClearCommand()
+    {
+        clearConsole();
+        System.out.println("Console cleared. Task data preserved in memory.");
+    }
+    
+    /**
      * Handles exit command.
      */
     private void handleExitCommand()
     {
         System.out.println("Exiting application...");
         running = false;
+    }
+    
+    /**
+     * Clears the console screen in a cross-platform manner.
+     * Works on Windows, Linux, and macOS terminals.
+     */
+    private void clearConsole()
+    {
+        try
+        {
+            final String os = System.getProperty("os.name").toLowerCase();
+            
+            if (os.contains("windows"))
+            {
+                // Windows command
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            }
+            else
+            {
+                // Unix/Linux/macOS command
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+            }
+        }
+        catch (final Exception e)
+        {
+            // Fallback: print multiple newlines if native clearing fails
+            for (int i = 0; i < 50; i++)
+            {
+                System.out.println();
+            }
+            System.out.println("Console cleared.");
+        }
     }
     
     /**
@@ -399,6 +447,10 @@ public class TaskManagementConsoleJava
         System.out.println("REMOVE/DELETE - Remove a task");
         System.out.println("  Usage: remove taskId");
         System.out.println("  Example: remove 1");
+        System.out.println();
+        System.out.println("CLEAR/CLS - Clear the console screen");
+        System.out.println("  Usage: clear");
+        System.out.println("  Note: This only clears the display, task data remains in memory");
         System.out.println();
         System.out.println("HELP - Show this help message");
         System.out.println("EXIT/QUIT - Exit the application");
