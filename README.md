@@ -13,7 +13,6 @@
 - [Development](#development)
 - [Project Structure](#project-structure)
 - [Contributing](#contributing)
-- [License](#license)
 - [Support](#support)
 
 ## Project Overview
@@ -505,24 +504,6 @@ task-management-console-java/
 - **Documentation**: Update README and documentation as needed
 - **Commit Messages**: Use clear, descriptive commit messages
 - **Scope**: Keep changes focused and manageable
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-### License Summary
-- **Commercial Use**: Permitted
-- **Modification**: Permitted
-- **Distribution**: Permitted
-- **Private Use**: Permitted
-- **Liability**: No warranty
-- **Notice**: Must include copyright and license notice
-
-### Third-Party Components
-- **Java Standard Library**: Oracle Binary Code License
-- **Apache Maven**: Apache License 2.0
-- **JUnit 4**: Eclipse Public License 1.0
-- All dependencies are standard Java libraries with permissive licenses
 
 ## Support
 
