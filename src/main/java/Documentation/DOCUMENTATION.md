@@ -2,235 +2,163 @@
 
 ## Table of Contents
 - [Project Overview](#project-overview)
+  - [Purpose and Scope](#purpose-and-scope)
+  - [Key Features](#key-features)
 - [System Architecture](#system-architecture)
-  - [Class Diagram](#class-diagram)
-  - [Data Flow Architecture](#data-flow-architecture)
+  - [Component Overview](#component-overview)
+  - [Class Relationships](#class-relationships)
 - [Installation and Setup](#installation-and-setup)
   - [Prerequisites](#prerequisites)
   - [Building from Source](#building-from-source)
   - [Running the Application](#running-the-application)
 - [Configuration](#configuration)
   - [File Structure](#file-structure)
-  - [Environment Setup](#environment-setup)
 - [User Guide](#user-guide)
   - [Getting Started](#getting-started)
   - [Basic Operations](#basic-operations)
-  - [Advanced Features](#advanced-features)
 - [Command Reference](#command-reference)
   - [Task Management Commands](#task-management-commands)
-  - [View and Filter Commands](#view-and-filter-commands)
+  - [Viewing Commands](#viewing-commands)
   - [Utility Commands](#utility-commands)
 - [Data Model Specification](#data-model-specification)
   - [Task Entity Definition](#task-entity-definition)
-  - [Status Management](#status-management)
+  - [Status Management System](#status-management-system)
   - [Priority System](#priority-system)
 - [Data Persistence](#data-persistence)
   - [File Storage System](#file-storage-system)
-  - [Backup and Recovery](#backup-and-recovery)
+  - [CSV Format Specification](#csv-format-specification)
 - [Error Handling System](#error-handling-system)
-  - [Common Error Scenarios](#common-error-scenarios)
-  - [Error Recovery Procedures](#error-recovery-procedures)
-- [Testing and Validation](#testing-and-validation)
-  - [Unit Testing Framework](#unit-testing-framework)
-  - [Integration Testing](#integration-testing)
+  - [Error Categories](#error-categories)
+  - [Error Messages](#error-messages)
+- [Testing Framework](#testing-framework)
+  - [Unit Testing Strategy](#unit-testing-strategy)
+  - [Test Organization](#test-organization)
+  - [Running Tests](#running-tests)
+  - [Test Coverage](#test-coverage)
 - [Development Guide](#development-guide)
   - [Code Organization](#code-organization)
-  - [Extension Points](#extension-points)
+  - [Build System](#build-system)
   - [Coding Standards](#coding-standards)
-- [Performance Optimization](#performance-optimization)
+- [Performance Considerations](#performance-considerations)
   - [Memory Management](#memory-management)
-  - [I/O Optimization](#io-optimization)
 - [Security Considerations](#security-considerations)
   - [Input Validation](#input-validation)
-  - [Data Protection](#data-protection)
 - [Troubleshooting Guide](#troubleshooting-guide)
-  - [Common Issues and Solutions](#common-issues-and-solutions)
-  - [Diagnostic Procedures](#diagnostic-procedures)
+  - [Common Issues](#common-issues)
 - [Limitations and Constraints](#limitations-and-constraints)
-- [Future Development Roadmap](#future-development-roadmap)
+  - [Technical Limitations](#technical-limitations)
 - [Appendix](#appendix)
   - [Quick Reference Guide](#quick-reference-guide)
-  - [Technical Specifications](#technical-specifications)
 
 ## Project Overview
 
-The Task Management Console Application is a comprehensive Java-based command-line utility designed for efficient task organization and management. This application provides a robust, console-driven interface for creating, tracking, and managing tasks with enterprise-grade validation and persistence capabilities. Developed using Java 8 and adhering to strict object-oriented design principles, this solution offers reliable task management without dependencies on external databases or graphical user interfaces.
+### Purpose and Scope
+
+The Task Management Console Application is a Java-based command-line utility 
+designed for efficient task organization and management. This application 
+provides a console interface for creating, tracking, and managing tasks with 
+comprehensive validation and persistence capabilities.
+
+The application is built with Java 8 and follows object-oriented design 
+principles. It operates entirely in the console without requiring graphical 
+interfaces or external databases. Task data is stored in memory during execution 
+and persisted to plain CSV files.
 
 ### Key Features
-- **Complete Task Lifecycle Management**: Full support for task creation, modification, tracking, and archival
-- **Advanced Validation Engine**: Comprehensive input validation for dates, priorities, and task statuses
-- **Autonomous Persistence Layer**: CSV-based file storage with automatic synchronization
-- **Cross-Platform Compatibility**: Native operation on Windows, Linux, and macOS environments
-- **Enhanced User Interface**: Integrated console clearing and formatted output display
-- **Memory-Efficient Architecture**: Optimized in-memory storage with intelligent file backup
-- **Resilient Error Management**: Comprehensive error handling with user-friendly recovery procedures
 
-### Target User Base
-- Individual professionals requiring personal task organization
-- Software developers and engineering teams
-- Educational institutions teaching software design patterns
-- Technical users preferring command-line interfaces
-- Project teams needing lightweight task tracking solutions
-
-### Repository Information
-- **GitHub Repository**: https://github.com/Naoyuki-Christopher-H/task-management-console-java.git
-- **Package Structure**: Solution
-- **Build System**: Apache Maven
-- **Java Version**: 8
-- **Project Version**: V-1.0.0
+1. **Complete Task Management**: Create, read, update, and delete tasks
+2. **Advanced Validation**: Comprehensive input validation for dates, priorities, and statuses
+3. **Automatic Persistence**: CSV-based file storage with automatic loading and saving
+4. **Cross-Platform Compatibility**: Works on Windows, Linux, and macOS
+5. **Console Clearing**: Built-in command to clear console screen while preserving data
+6. **Comprehensive Testing**: Complete JUnit 4 test suite with 247 unit tests
+7. **Robust Error Handling**: Informative error messages with recovery guidance
 
 ## System Architecture
 
-### Class Diagram
+### Component Overview
 
-The application implements a modular architecture with distinct separation of concerns:
+The application follows a modular architecture with five main components:
+
+1. **TaskManagementConsoleJava**: Main application controller handling user interaction
+2. **Task**: Data model representing task entities with validation logic
+3. **TaskManager**: Business logic component managing task operations
+4. **CommandParser**: Input parsing and validation component
+5. **FileHandler**: File I/O operations for data persistence
+
+### Class Relationships
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                 TaskManagementConsoleJava                   │
-│                (Main Application Controller)                │
-└──────────────────────────────┬──────────────────────────────┘
-                               │
-        ┌──────────────────────┼──────────────────────┐
-        │                      │                      │
-┌───────▼───────┐    ┌────────▼────────┐    ┌────────▼────────┐
-│   TaskManager │    │  CommandParser  │    │   FileHandler   │
-│  (Business    │    │ (Input Parsing  │    │ (File I/O and   │
-│   Logic Core) │    │   and Routing)  │    │   Persistence)  │
-└───────┬───────┘    └─────────────────┘    └─────────────────┘
-        │
-┌───────▼───────┐
-│     Task      │
-│ (Data Model & │
-│  Validation)  │
-└───────────────┘
+TaskManagementConsoleJava (Main)
+         │
+         ├── TaskManager (Business Logic)
+         │       │
+         │       └── Task (Data Model)
+         │
+         ├── CommandParser (Input Handling)
+         │
+         └── FileHandler (Persistence)
 ```
-
-### Data Flow Architecture
-
-The application follows a structured data flow pattern:
-
-1. **Input Phase**: User commands are captured through standard input
-2. **Parsing Phase**: Commands are validated and structured by CommandParser
-3. **Processing Phase**: Business logic is executed by TaskManager
-4. **Persistence Phase**: Data changes are synchronized by FileHandler
-5. **Output Phase**: Results are formatted and displayed to the user
 
 ## Installation and Setup
 
 ### Prerequisites
 
-#### Software Requirements
-1. **Java Development Kit (JDK) 8 or Higher**
-   - Download from [Oracle JDK](https://www.oracle.com/java/technologies/javase-jdk8-downloads.html) or [OpenJDK](https://openjdk.java.net/)
-   - Installation verification command: `java -version`
-   - Minimum required version: Java SE 8 Update 201
+1. **Java Development Kit (JDK) 8 or higher**
+   - Verify installation: `java -version`
+   - Download from Oracle or OpenJDK
 
-2. **Apache Maven 3.6.0 or Higher**
-   - Download from [Apache Maven](https://maven.apache.org/download.cgi)
-   - Installation verification command: `mvn -version`
-   - Required for dependency management and build automation
+2. **Apache Maven 3.6.0 or higher** (for building from source)
+   - Verify installation: `mvn -version`
+   - Required for dependency management and building
 
-3. **Git Client (for source cloning)**
-   - Download from [Git Official Site](https://git-scm.com/downloads)
-   - Required for accessing the GitHub repository
-
-4. **Command Line Terminal**
-   - Windows: Command Prompt (admin rights may be required) or PowerShell
-   - Linux: Bash terminal or equivalent
-   - macOS: Terminal application
-   - Minimum display: 80 columns for proper formatting
-
-#### System Requirements
-- **Operating System**: Windows 7+, macOS 10.10+, or Linux (any modern distribution)
-- **Memory**: Minimum 512 MB RAM (2 GB recommended)
-- **Disk Space**: 50 MB available space
-- **Screen Resolution**: Capable of displaying 80-character wide text
+3. **Command Line Interface**
+   - Windows: Command Prompt or PowerShell
+   - Linux/macOS: Terminal or shell
+   - Minimum terminal size: 80 columns for proper display
 
 ### Building from Source
 
 #### Step 1: Clone Repository
 ```bash
-# Clone the repository from GitHub
 git clone https://github.com/Naoyuki-Christopher-H/task-management-console-java.git
-
-# Navigate to project directory
 cd task-management-console-java
 ```
 
-#### Step 2: Verify Project Structure
-Ensure the following directory structure exists:
-```
-task-management-console-java/
-├── src/
-│   └── main/
-│       └── java/
-│           └── Solution/
-│               ├── Task.java
-│               ├── TaskManager.java
-│               ├── CommandParser.java
-│               ├── FileHandler.java
-│               └── TaskManagementConsoleJava.java
-├── pom.xml
-└── README.md
-```
-
-#### Step 3: Build Application
+#### Step 2: Build with Maven
 ```bash
-# Clean any previous builds
+# Clean previous builds
 mvn clean
 
-# Compile source code
+# Compile the project
 mvn compile
 
-# Package into executable JAR
-mvn package
-
-# Run tests (if available)
+# Run tests
 mvn test
+
+# Create executable JAR
+mvn package
 ```
 
-#### Step 4: Verify Build Artifacts
-After successful build, verify these files exist:
-- `target/task-management-console-java-V-1.0.0.jar` (executable JAR)
-- `target/classes/` directory with compiled classes
-- Build success message in console output
+#### Step 3: Verify Build
+After successful build, verify the executable JAR exists:
+- `target/task-management-console-java-V-1.0.0.jar`
 
 ### Running the Application
 
-#### Option 1: Run with Maven (Development)
+#### Option 1: Run with Maven
 ```bash
-# Direct execution via Maven
 mvn exec:java -Dexec.mainClass="Solution.TaskManagementConsoleJava"
 ```
 
 #### Option 2: Run from Executable JAR
 ```bash
-# Navigate to target directory
-cd target
-
-# Execute the JAR file
-java -jar task-management-console-java-V-1.0.0.jar
+java -jar target/task-management-console-java-V-1.0.0.jar
 ```
 
 #### Option 3: Direct Java Execution
 ```bash
-# Compile and run directly
-javac -d out src/main/java/Solution/*.java
-java -cp out Solution.TaskManagementConsoleJava
-```
-
-#### Option 4: Create System Shortcut (Windows)
-```batch
-@echo off
-java -jar "C:\path\to\task-management-console-java-V-1.0.0.jar"
-pause
-```
-
-#### Option 5: Create Desktop Launcher (Linux/macOS)
-```bash
-#!/bin/bash
-cd /path/to/application
+cd target
 java -jar task-management-console-java-V-1.0.0.jar
 ```
 
@@ -241,78 +169,34 @@ java -jar task-management-console-java-V-1.0.0.jar
 #### Application Directory Layout
 ```
 task-management-console-java/
-├── src/                          # Source code
-│   └── main/
-│       ├── java/
-│       │   └── Solution/         # Main package
-│       │       ├── TaskManagementConsoleJava.java
-│       │       ├── Task.java
-│       │       ├── TaskManager.java
-│       │       ├── CommandParser.java
-│       │       └── FileHandler.java
-│       └── resources/            # Configuration resources
-├── target/                       # Build output
-│   ├── classes/                  # Compiled classes
-│   ├── task-management-console-java-V-1.0.0.jar
-│   └── surefire-reports/         # Test reports
-├── pom.xml                       # Maven configuration
-├── tasks.csv                     # Data file (created at runtime)
-└── README.md                     # Project documentation
+├── src/main/java/Solution/          # Source code
+│   ├── TaskManagementConsoleJava.java
+│   ├── Task.java
+│   ├── TaskManager.java
+│   ├── CommandParser.java
+│   └── FileHandler.java
+├── src/test/java/Solution/          # Test source code
+│   ├── TaskTest.java
+│   ├── TaskManagerTest.java
+│   ├── CommandParserTest.java
+│   ├── FileHandlerTest.java
+│   └── TaskManagementConsoleJavaTest.java
+├── pom.xml                          # Maven configuration
+├── tasks.csv                        # Data file (created at runtime)
+└── README.md                        # Project documentation
 ```
 
 #### Data File Location
-- **Primary Data File**: `tasks.csv` in application root directory
+- **Primary Data File**: `tasks.csv` in application working directory
 - **File Format**: Comma-separated values with UTF-8 encoding
 - **Backup Recommendation**: Regular backup of `tasks.csv` file
-
-### Environment Setup
-
-#### Java Environment Variables
-```bash
-# Set JAVA_HOME (Windows)
-set JAVA_HOME=C:\Program Files\Java\jdk1.8.0_291
-
-# Set JAVA_HOME (Linux/macOS)
-export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-
-# Add to PATH (Windows)
-set PATH=%JAVA_HOME%\bin;%PATH%
-
-# Add to PATH (Linux/macOS)
-export PATH=$JAVA_HOME/bin:$PATH
-```
-
-#### Maven Configuration
-```bash
-# Verify Maven settings
-mvn -v
-
-# Configure Maven for offline work (optional)
-mvn dependency:go-offline
-```
-
-#### Application Startup Parameters
-The application supports the following optional startup parameters:
-
-```bash
-# Specify custom data file location
-java -jar task-management-console-java-V-1.0.0.jar --datafile=/path/to/custom.csv
-
-# Enable debug logging (if implemented)
-java -jar task-management-console-java-V-1.0.0.jar --debug
-
-# Specify maximum task limit
-java -jar task-management-console-java-V-1.0.0.jar --max-tasks=1000
-```
-
-Note: Custom parameter support may require additional implementation.
 
 ## User Guide
 
 ### Getting Started
 
 #### Initial Launch
-1. Start the application using one of the methods described in the "Running the Application" section
+1. Start the application using one of the methods above
 2. Observe the welcome screen:
    ```
    ========================================
@@ -326,171 +210,102 @@ Note: Custom parameter support may require additional implementation.
 3. The application automatically loads existing tasks from `tasks.csv` if available
 4. A command prompt (`>`) appears, indicating the application is ready for input
 
-#### First Time Setup
-1. Create your first task:
-   ```
-   > create "Complete project documentation", HIGH, 2024-12-31
-   ```
+#### First Task Creation
+```bash
+> create "Complete project documentation", HIGH, 2024-12-31
+Task created successfully:
+ID: 1 | Description: Complete project documentation | Priority: HIGH   | Due: 2024-12-31 | Status: To Do
+```
 
-2. Verify task creation:
-   ```
-   Task created successfully:
-   ID: 1 | Description: Complete project documentation | Priority: HIGH   | Due: 2024-12-31 | Status: To Do
-   ```
+#### Viewing Tasks
+```bash
+> list
 
-3. List all tasks:
-   ```
-   > list
-   
-   === Tasks ===
-   To Do: 1 | Doing: 0 | Done: 0 | Total: 1
-   --------------------------------------------------------------------------------
-   ID: 1 | Description: Complete project documentation | Priority: HIGH   | Due: 2024-12-31 | Status: To Do
-   --------------------------------------------------------------------------------
-   ```
+=== Tasks ===
+To Do: 1 | Doing: 0 | Done: 0 | Total: 1
+--------------------------------------------------------------------------------
+ID: 1 | Description: Complete project documentation | Priority: HIGH   | Due: 2024-12-31 | Status: To Do
+--------------------------------------------------------------------------------
+```
 
 ### Basic Operations
 
 #### Creating Tasks
-Tasks can be created with three required parameters: description, priority, and due date.
+**Syntax**: `create "description", PRIORITY, YYYY-MM-DD`
 
-**Syntax:**
-```
-create "description", PRIORITY, YYYY-MM-DD
-```
-
-**Examples:**
+**Examples**:
 ```bash
-# Basic task creation
 > create "Submit weekly report", MEDIUM, 2024-03-15
-
-# Task with complex description
-> create "Prepare presentation for quarterly review with management team", HIGH, 2024-03-20
-
-# Multiple task creation
 > create "Buy groceries", LOW, 2024-03-10
-> create "Finish coding assignment", HIGH, 2024-03-25
-> create "Schedule team meeting", MEDIUM, 2024-03-12
+> create "Prepare presentation for quarterly review", HIGH, 2024-03-20
 ```
 
-**Validation Rules:**
-- Description must be non-empty and enclosed in quotes if containing spaces
-- Priority must be one of: LOW, MEDIUM, HIGH (case-insensitive)
+**Validation Rules**:
+- Description must be non-empty
+- Priority must be LOW, MEDIUM, or HIGH (case-insensitive)
 - Due date must be in YYYY-MM-DD format
 - Due date cannot be earlier than current date
 
 #### Viewing Tasks
-
-**View All Tasks:**
-```
+**View All Tasks**:
+```bash
 > list
 ```
 
-**Filter by Status:**
+**Filter by Status**:
 ```bash
-# View pending tasks
 > list "To Do"
-
-# View in-progress tasks
 > list Doing
-
-# View completed tasks
 > list Done
 ```
 
-**Task Display Format:**
-```
-ID: 1 | Description: Complete project documentation | Priority: HIGH   | Due: 2024-12-31 | Status: To Do
-```
-- **ID**: Unique task identifier (auto-generated)
-- **Description**: Task summary (truncated to 30 characters)
-- **Priority**: Task importance level
-- **Due**: Completion deadline
-- **Status**: Current progress state
-
 #### Updating Tasks
-
-**Update Task Status:**
+**Update Status**:
 ```bash
-# Mark task as in progress
 > update status 1 Doing
-
-# Mark task as completed
 > update status 1 Done
-
-# Revert to pending
 > update status 1 "To Do"
 ```
 
-**Update Task Description:**
+**Update Description**:
 ```bash
 > update desc 1 "Complete project documentation with detailed examples"
 ```
 
-**Update Task Priority:**
+**Update Priority**:
 ```bash
 > update priority 1 MEDIUM
 ```
 
-**Update Due Date:**
+**Update Due Date**:
 ```bash
 > update due 1 2024-12-15
 ```
 
 #### Deleting Tasks
-
-**Remove Single Task:**
+**Remove Single Task**:
 ```bash
 > remove 1
 Task 1 removed successfully.
 ```
 
-**Batch Removal Process:**
-1. List tasks to identify IDs for removal
-2. Remove tasks individually by ID
-3. Verify removal by listing remaining tasks
-
-### Advanced Features
-
-#### Task Statistics
-The application provides task count statistics with each list command:
-```
-To Do: 3 | Doing: 2 | Done: 5 | Total: 10
-```
-
-#### Console Management
-
-**Clear Screen:**
+#### Utility Commands
+**Clear Screen**:
 ```bash
 > clear
+Console cleared. Task data preserved in memory.
 ```
-or
-```bash
-> cls
-```
-This command clears the console display while preserving all task data in memory.
 
-**Help System:**
+**Show Help**:
 ```bash
 > help
 ```
-Displays comprehensive command reference and usage examples.
 
-#### Data Management
-
-**Automatic Saving:**
-- Tasks are automatically saved to `tasks.csv` when the application exits
-- Data integrity is maintained through transaction-like file operations
-
-**Manual Data Verification:**
+**Exit Application**:
 ```bash
-# Check task counts
-> list
-
-# Verify individual task details
-> list "To Do"
-> list Doing
-> list Done
+> exit
+Tasks saved to file.
+Application terminated. Goodbye!
 ```
 
 ## Command Reference
@@ -498,103 +313,106 @@ Displays comprehensive command reference and usage examples.
 ### Task Management Commands
 
 #### CREATE Command
-**Purpose**: Create a new task with specified attributes
+Creates a new task with specified attributes.
 
-**Syntax:**
+**Syntax**:
 ```
 create "description", PRIORITY, YYYY-MM-DD
 ```
 
-**Aliases:** `add`
+**Aliases**: `add`
 
-**Parameters:**
-- `description`: Text description of the task (quotes required for multi-word descriptions)
+**Parameters**:
+- `description`: Task description (use quotes for multi-word descriptions)
 - `PRIORITY`: Importance level (LOW, MEDIUM, HIGH)
 - `YYYY-MM-DD`: Due date in ISO format
 
-**Examples:**
+**Examples**:
 ```bash
-> create "Email client updates", MEDIUM, 2024-03-18
-> create "Review code submissions", HIGH, 2024-03-22
-> create "Plan next sprint", LOW, 2024-03-25
+> create "Complete assignment", HIGH, 2024-12-15
+> create "Team meeting", MEDIUM, 2024-03-25
 ```
 
-**Validation:**
-- Rejects empty descriptions
-- Validates priority against allowed values
-- Ensures date is in correct format and not in the past
-- Provides specific error messages for each validation failure
+**Error Messages**:
+```
+Error: Create command requires: description, priority, dueDate (yyyy-MM-dd)
+Error: Invalid priority. Valid values are: LOW, MEDIUM, HIGH
+Error: Invalid date format. Please use yyyy-MM-dd format
+Error: Due date cannot be earlier than current date: 2024-03-14
+```
 
 #### UPDATE Command
-**Purpose**: Modify existing task attributes
+Modifies existing task attributes.
 
-**Syntax:**
+**Syntax**:
 ```
 update SUBCOMMAND TASK_ID VALUE
 ```
 
-**Aliases:** `change`
+**Aliases**: `change`
 
-**Subcommands:**
+**Subcommands**:
 - `status`: Update task status (To Do, Doing, Done)
 - `desc` or `description`: Update task description
 - `priority`: Update task priority (LOW, MEDIUM, HIGH)
 - `due` or `duedate`: Update due date (YYYY-MM-DD)
 
-**Examples:**
+**Examples**:
 ```bash
-> update status 3 Doing
-> update desc 5 "Updated project requirements"
-> update priority 2 HIGH
-> update due 1 2024-04-15
+> update status 1 Doing
+> update desc 2 "Updated meeting agenda"
+> update priority 3 HIGH
+> update due 1 2024-04-01
 ```
 
-**Error Conditions:**
-- Invalid task ID (non-existent)
-- Invalid status value
-- Invalid priority value
-- Invalid date format or past date
+**Error Messages**:
+```
+Error: Update command requires subcommand: status, desc, priority, or due
+Error: Task with ID 999 not found
+Error: Invalid status. Valid values are: To Do, Doing, Done
+```
 
 #### REMOVE Command
-**Purpose**: Delete a task from the system
+Deletes a task from the system.
 
-**Syntax:**
+**Syntax**:
 ```
 remove TASK_ID
 ```
 
-**Aliases:** `delete`
+**Aliases**: `delete`
 
-**Parameters:**
-- `TASK_ID`: Numeric identifier of the task to remove
-
-**Examples:**
+**Examples**:
 ```bash
-> remove 3
-> delete 5
+> remove 1
+> delete 3
 ```
 
-**Behavior:**
-- Removes task from memory and marks for deletion from file on exit
-- Provides confirmation message upon successful removal
-- Informs user if specified task ID doesn't exist
+**Behavior**:
+- Removes task from memory immediately
+- Task ID is permanently removed (not reused)
+- Operation is irreversible
 
-### View and Filter Commands
+**Error Messages**:
+```
+Error: Remove command requires: taskId
+Error: Task ID must be a number
+Task 999 not found.
+```
+
+### Viewing Commands
 
 #### LIST Command
-**Purpose**: Display tasks with optional filtering
+Displays tasks with optional filtering.
 
-**Syntax:**
+**Syntax**:
 ```
 list [STATUS_FILTER]
 ```
 
-**Aliases:** `show`
+**Aliases**: `show`
 
-**Parameters:**
-- `STATUS_FILTER` (optional): Filter tasks by status (To Do, Doing, Done)
-
-**Examples:**
+**Examples**:
 ```bash
 # Show all tasks
 > list
@@ -603,127 +421,136 @@ list [STATUS_FILTER]
 > list "To Do"
 > list Doing
 > list Done
-
-# Using alias
-> show
 ```
 
-**Output Format:**
-- Header with task statistics
-- Separator line
-- Task details in tabular format
-- Footer separator
-- Tasks are displayed in order of creation
+**Output Format**:
+```
+=== Tasks ===
+To Do: 3 | Doing: 2 | Done: 5 | Total: 10
+--------------------------------------------------------------------------------
+ID: 1 | Description: Complete assignment     | Priority: HIGH   | Due: 2024-12-15 | Status: To Do
+ID: 2 | Description: Team meeting           | Priority: MEDIUM | Due: 2024-03-25 | Status: Doing
+--------------------------------------------------------------------------------
+```
+
+**Empty State**:
+```
+No tasks found.
+```
 
 #### HELP Command
-**Purpose**: Display command reference and usage instructions
+Displays comprehensive command reference.
 
-**Syntax:**
+**Syntax**:
 ```
 help
 ```
 
-**Output:**
+**Output**: Detailed help information including:
 - Complete list of available commands
 - Syntax examples for each command
 - Parameter explanations
-- Usage tips and best practices
+- Command aliases
 
 ### Utility Commands
 
 #### CLEAR Command
-**Purpose**: Clear console screen display
+Clears the console screen while preserving all task data.
 
-**Syntax:**
+**Syntax**:
 ```
 clear
 ```
 
-**Aliases:** `cls`
+**Aliases**: `cls`
 
-**Behavior:**
+**Behavior**:
 - Clears terminal screen using platform-appropriate method
 - Preserves all task data in memory
 - Maintains application state
 - Provides confirmation message
 
-**Platform Implementation:**
+**Platform Implementation**:
 - Windows: Uses `cls` command via ProcessBuilder
 - Unix/Linux/macOS: Uses ANSI escape sequences
 - Fallback: Prints blank lines if native clearing fails
 
-#### EXIT Command
-**Purpose**: Terminate the application
+**Examples**:
+```bash
+> clear
+Console cleared. Task data preserved in memory.
+```
 
-**Syntax:**
+#### EXIT Command
+Terminates the application and saves all tasks to file.
+
+**Syntax**:
 ```
 exit
 ```
 
-**Aliases:** `quit`
+**Aliases**: `quit`
 
-**Behavior:**
-- Saves all tasks to `tasks.csv`
-- Closes input scanner
-- Releases system resources
-- Displays termination message
-- Returns control to operating system
+**Behavior**:
+1. Saves all tasks to `tasks.csv`
+2. Closes input scanner
+3. Releases system resources
+4. Displays termination message
+
+**Examples**:
+```bash
+> exit
+Tasks saved to file.
+Application terminated. Goodbye!
+```
 
 ## Data Model Specification
 
 ### Task Entity Definition
 
 #### Core Attributes
-Each task in the system is defined by the following mandatory attributes:
+Each task in the system is defined by five mandatory attributes:
 
 1. **ID (Identifier)**
-   - Type: Integer
-   - Generation: Auto-incremented (starting from 1)
-   - Uniqueness: Guaranteed unique within session
-   - Persistence: Maintained across application sessions
+   - Type: Integer (auto-incremented, starting from 1)
+   - Uniqueness: Guaranteed unique within application session
+   - Persistence: Maintained across application restarts via CSV
    - Constraints: Read-only after creation
 
 2. **Description**
-   - Type: String
-   - Length: 1 to unlimited characters
-   - Format: Plain text
-   - Special Characters: Commas are escaped in CSV storage
-   - Validation: Cannot be empty or whitespace-only
+   - Type: String (1 to 1000 characters)
+   - Validation: Cannot be null, empty, or whitespace-only
+   - Storage: Commas escaped as semicolons in CSV
+   - Display: Truncated to 30 characters with ellipsis in list view
 
 3. **Priority**
    - Type: Enumerated (LOW, MEDIUM, HIGH)
    - Default: None (must be specified at creation)
-   - Business Rules:
-     - HIGH: Critical tasks with immediate deadlines
-     - MEDIUM: Important tasks with near-term deadlines
-     - LOW: Routine tasks or items without urgent deadlines
+   - Validation: Case-insensitive string conversion
+   - Display: Right-aligned in 6-character field
 
 4. **Due Date**
    - Type: LocalDate (Java 8 Date API)
    - Format: ISO 8601 (YYYY-MM-DD)
-   - Validation Rules:
-     - Must be valid calendar date
-     - Cannot be earlier than current system date
-     - Parsing strictly enforced
-   - Display Format: YYYY-MM-DD in all outputs
+   - Validation: Must be valid date, cannot be earlier than current date
+   - Display: YYYY-MM-DD in all outputs
 
 5. **Status**
    - Type: Enumerated (TODO, DOING, DONE)
    - Default: TODO (when task is created)
+   - Display: "To Do", "Doing", "Done" (user-facing names)
    - State Transitions: Any status can transition to any other status
-   - Business Meaning:
-     - TODO: Task not yet started
-     - DOING: Task in progress
-     - DONE: Task completed
 
-### Status Management
+### Status Management System
 
-#### Status Enumeration Values
+#### Status Enumeration
+**Internal Representation**:
 ```java
-public enum Status {
-    TODO("To Do"),     // Pending tasks
-    DOING("Doing"),    // Active tasks
-    DONE("Done");      // Completed tasks
+public enum Status
+{
+    TODO("To Do"),     // Internal: TODO, Display: "To Do"
+    DOING("Doing"),    // Internal: DOING, Display: "Doing"
+    DONE("Done");      // Internal: DONE, Display: "Done"
 }
 ```
 
@@ -731,18 +558,17 @@ public enum Status {
 - **Initial State**: All tasks created with TODO status
 - **Allowed Transitions**: Any status can change to any other status
 - **Validation**: Status values are strictly validated against enumeration
-- **Display**: User sees display names ("To Do", "Doing", "Done")
-
-#### Status-Based Operations
-1. **Filtering**: Tasks can be filtered by status using LIST command
-2. **Statistics**: Task counts by status are displayed in header
-3. **Reporting**: Status distribution provides productivity insights
+- **Business Meaning**:
+  - TODO: Task not yet started
+  - DOING: Task in progress
+  - DONE: Task completed
 
 ### Priority System
 
 #### Priority Levels Definition
 ```java
-public enum Priority {
+public enum Priority
+{
     LOW,      // Non-urgent, routine tasks
     MEDIUM,   // Important tasks with flexible deadlines
     HIGH      // Critical tasks requiring immediate attention
@@ -750,384 +576,334 @@ public enum Priority {
 ```
 
 #### Priority Assignment Guidelines
-
-**HIGH Priority Tasks:**
-- Immediate deadlines (within 3 days)
-- Critical business impact
-- Dependency for other tasks
-- Client-requested urgent items
-
-**MEDIUM Priority Tasks:**
-- Deadlines within 1-2 weeks
-- Important but not critical
-- Regular business operations
-- Team dependencies
-
-**LOW Priority Tasks:**
-- No specific deadline
-- Routine maintenance
-- Personal development
-- Long-term improvements
-
-#### Priority Display Format
-- **Console Output**: Right-aligned in 6-character field
-- **CSV Storage**: Stored as enum name (LOW, MEDIUM, HIGH)
-- **User Input**: Case-insensitive acceptance
+- **HIGH**: Critical tasks with immediate deadlines (within 3 days)
+- **MEDIUM**: Important tasks with near-term deadlines (1-2 weeks)
+- **LOW**: Routine tasks or items without urgent deadlines
 
 ## Data Persistence
 
 ### File Storage System
 
-#### File Format Specification
-The application uses CSV (Comma-Separated Values) format for data persistence:
-
-**File Location:** `tasks.csv` in application directory
-
-**File Encoding:** UTF-8
-
-**Field Order:**
-1. ID (Integer)
-2. Description (String, commas escaped as semicolons)
-3. Priority (Enum: LOW, MEDIUM, HIGH)
-4. Due Date (ISO Date: YYYY-MM-DD)
-5. Status (Enum: TODO, DOING, DONE)
-
-**Example CSV Content:**
-```
-1,Complete project documentation,HIGH,2024-12-31,TODO
-2,Submit weekly report,MEDIUM,2024-03-15,DOING
-3,Buy groceries,LOW,2024-03-10,DONE
-```
-
 #### File Operations
+The application stores data in a CSV file named `tasks.csv` in the application directory.
 
-**Loading Process:**
+**Loading Process**:
 1. Check for file existence at startup
 2. Parse CSV line by line
 3. Validate each field
 4. Recreate task objects in memory
 5. Update ID counter to prevent conflicts
-6. Report success/failure to user
 
-**Saving Process:**
+**Saving Process**:
 1. Convert all tasks to CSV format
-2. Create backup of existing file (if exists)
-3. Write new file atomically
-4. Verify write operation
-5. Remove backup on success
+2. Write to file with error handling
+3. Provide confirmation of save operation
 
-**File Validation:**
-- Syntax validation during loading
-- Data type validation for each field
-- Date format verification
-- Enum value validation
-- Duplicate ID detection
-
-### Automatic Saving
-
-#### Save Triggers
-1. **Application Exit**: All tasks saved when user types `exit` or `quit`
-2. **Normal Termination**: Save on Ctrl+C (interrupt signal)
-3. **Error Conditions**: Attempt to save on unexpected termination
-
-#### Save Procedure
+#### File Handler Implementation
 ```java
-public void saveTasksToFile() {
-    try {
-        List<Task> tasks = taskManager.getAllTasks();
-        fileHandler.saveTasksToFile(tasks);
-        System.out.println("Tasks saved to file.");
-    } catch (IOException e) {
-        System.out.println("Warning: Could not save tasks to file: " + e.getMessage());
-    }
+public class FileHandler
+{
+    // Save tasks to file
+    public void saveTasksToFile(List<Task> tasks, String filename) throws IOException
+    
+    // Load tasks from file
+    public List<Task> loadTasksFromFile(String filename) throws IOException
+    
+    // Check file existence
+    public boolean fileExists(String filename)
 }
 ```
 
-#### Data Integrity Measures
-1. **Atomic Writes**: Complete file replacement prevents partial writes
-2. **Backup Creation**: Original file preserved during save operation
-3. **Error Recovery**: Failed saves don't corrupt existing data
-4. **Validation**: Data validated before and after file operations
+### CSV Format Specification
 
-### Backup and Recovery
-
-#### Manual Backup Procedures
-
-**Creating Backup:**
-```bash
-# Copy the data file
-cp tasks.csv tasks_backup_$(date +%Y%m%d).csv
-
-# Verify backup
-ls -la tasks_backup_*.csv
+#### Field Definitions
+**CSV Structure**:
+```
+ID,Description,Priority,DueDate,Status
 ```
 
-**Restoring from Backup:**
-```bash
-# Stop application if running
-# Replace corrupted file with backup
-cp tasks_backup_20240314.csv tasks.csv
+**Field Details**:
+1. **ID**: Integer (plain number, auto-incremented)
+2. **Description**: String (commas escaped as semicolons)
+3. **Priority**: Enum (LOW, MEDIUM, HIGH - uppercase in storage)
+4. **DueDate**: Date (YYYY-MM-DD, ISO 8601 format)
+5. **Status**: Enum (TODO, DOING, DONE - internal enum names)
 
-# Restart application
-java -jar task-management-console-java-V-1.0.0.jar
+**Example CSV Content**:
+```
+1,Complete project documentation,HIGH,2024-12-31,TODO
+2,Submit weekly report,MEDIUM,2024-03-15,DOING
+3,Buy groceries,LOW,2024-03-10,DONE
+4,Task; with; escaped; commas,HIGH,2024-12-25,TODO
 ```
 
-#### Data Recovery Scenarios
-
-**Scenario 1: File Corruption**
-1. Rename corrupted file: `mv tasks.csv tasks_corrupted.csv`
-2. Restore from latest backup
-3. Restart application
-
-**Scenario 2: Accidental Deletion**
-1. Restore from backup
-2. If no backup, tasks since last save are lost
-3. Application starts with empty task list
-
-**Scenario 3: Format Errors**
-1. Application detects malformed CSV on startup
-2. Error message displayed with line number
-3. Manual intervention required
-4. File can be edited with text editor to fix errors
-
-#### Preventive Measures
-1. **Regular Backups**: Schedule automated backups of `tasks.csv`
-2. **Version Control**: Consider adding `tasks.csv` to version control (excluding sensitive data)
-3. **Monitoring**: Implement file size and modification time monitoring
-4. **Validation Scripts**: Create scripts to validate CSV format periodically
+#### CSV Escaping Rules
+- **Commas in Descriptions**: Replaced with semicolons in CSV storage
+- **Process**: `description.replace(",", ";")` on save, reverse on load
+- **Impact**: Semicolons in original descriptions would be corrupted
 
 ## Error Handling System
 
-### Common Error Scenarios
+### Error Categories
 
 #### Input Validation Errors
+- **Invalid Command Format**: Missing parameters, incorrect syntax
+- **Invalid Date Format**: Date not in YYYY-MM-DD format
+- **Past Due Date**: Date earlier than current system date
+- **Invalid Priority**: Value not in LOW, MEDIUM, HIGH
+- **Invalid Status**: Value not in To Do, Doing, Done
+- **Non-existent Task ID**: Task ID not found in system
 
-**Invalid Command Format:**
-```
-> create
-Error: Create command requires: description, priority, dueDate (yyyy-MM-dd)
-```
+#### File Operation Errors
+- **File Access Errors**: Permission issues, file locks, disk full
+- **File Format Errors**: Corrupted or malformed CSV file
+- **Data Integrity Errors**: Inconsistent data state
 
-**Invalid Date Format:**
+#### Runtime Errors
+- **Memory Errors**: Insufficient heap space for large datasets
+- **System Errors**: Operating system or JVM issues
+
+### Error Messages
+
+#### Message Format
+Error messages follow a clear format with specific details and suggested actions.
+
+**Examples**:
 ```
-> create "Task", HIGH, 2024/03/15
 Error: Invalid date format. Please use yyyy-MM-dd format. Example: 2024-12-31
-```
-
-**Past Due Date:**
-```
-> create "Task", HIGH, 2020-01-01
 Error: Due date cannot be earlier than current date: 2024-03-14
-```
-
-**Invalid Priority:**
-```
-> create "Task", URGENT, 2024-12-31
 Error: Invalid priority. Valid values are: LOW, MEDIUM, HIGH
-```
-
-**Invalid Status:**
-```
-> update status 1 InProgress
-Error: Invalid status. Valid values are: To Do, Doing, Done
-```
-
-#### Task Operation Errors
-
-**Non-existent Task ID:**
-```
-> update status 999 Doing
 Error: Task with ID 999 not found
+Warning: Could not save tasks to file: Access denied
 ```
 
-**Empty Description:**
-```
-> create "", HIGH, 2024-12-31
-Error: Description cannot be empty
-```
+#### Error Recovery Procedures
 
-**File Operation Errors:**
-```
-Error: Could not save tasks to file: Access denied
-Warning: Could not load tasks from file: File not found
-```
-
-### Error Recovery Procedures
-
-#### User-Level Recovery
-
-**For Invalid Input:**
+**User-Level Recovery**:
 1. Read the error message carefully
 2. Note the specific validation failure
 3. Re-enter command with corrected values
 4. Use `help` command for syntax reference if needed
 
-**For File Errors:**
-1. Check file permissions
-2. Verify disk space availability
-3. Ensure file is not open in another program
-4. Try restarting the application
-
-**For Task Not Found:**
-1. Use `list` command to see available task IDs
-2. Verify the correct task ID
-3. Re-enter command with valid ID
-
-#### System-Level Recovery
-
-**Automatic Recovery Actions:**
+**System-Level Recovery**:
 1. **File Read Errors**: Start with empty task list, inform user
 2. **File Write Errors**: Preserve existing file, report warning
-3. **Memory Errors**: Attempt graceful shutdown with data save
-4. **Input Errors**: Reset parser state, await new command
+3. **Input Errors**: Reset parser state, await new command
 
-**Fallback Mechanisms:**
-1. **File Backup**: Original file preserved during save operations
-2. **Memory Cache**: Tasks remain in memory during file errors
-3. **Validation**: Pre-corruption validation prevents bad data persistence
-4. **State Preservation**: Application state maintained through errors
+## Testing Framework
 
-#### Diagnostic Information
+### Unit Testing Strategy
 
-**Error Message Components:**
-1. **Error Type**: Brief description of error category
-2. **Specific Message**: Detailed explanation of what went wrong
-3. **Recovery Hint**: Suggested action for resolution
-4. **Context**: Relevant parameters or values involved
+#### Testing Philosophy
+The application includes a comprehensive JUnit 4 test suite with 247 unit tests 
+covering all components.
 
-**Example Diagnostic Output:**
-```
-Error: Create command failed
-Reason: Invalid date format
-Input: 2024/03/15
-Expected Format: yyyy-MM-dd
-Suggested Action: Re-enter command with corrected date format
-```
+**Test Principles**:
+1. **High Coverage**: Aim for >90% code coverage across all components
+2. **Isolation**: Each test is independent and doesn't rely on external systems
+3. **Comprehensive**: Test positive, negative, and edge cases
+4. **Fast Execution**: Tests run quickly to enable frequent execution
 
-## Testing and Validation
+#### Test Tools and Frameworks
+- **Primary Framework**: JUnit 4.13.2
+- **Build Tool**: Apache Maven with Surefire plugin
+- **Assertion Methods**: Standard JUnit assertions (assertEquals, assertTrue, etc.)
+- **Test Annotations**: @Test, @Before, @After, @BeforeClass, @AfterClass
 
-### Unit Testing Framework
+### Test Organization
 
 #### Test Structure
-The application should include comprehensive unit tests for each component:
-
-**Task Class Tests:**
-```java
-@Test
-public void testTaskCreationValid() {
-    Task task = new Task("Test Task", Task.Priority.MEDIUM, LocalDate.now().plusDays(1));
-    assertNotNull(task);
-    assertEquals("Test Task", task.getDescription());
-}
-
-@Test(expected = IllegalArgumentException.class)
-public void testTaskCreationPastDate() {
-    new Task("Test Task", Task.Priority.MEDIUM, LocalDate.now().minusDays(1));
-}
+**Test Directory**:
+```
+src/test/java/Solution/
+├── TaskTest.java              # 87 tests - Task entity unit tests
+├── TaskManagerTest.java       # 46 tests - Business logic tests
+├── CommandParserTest.java     # 42 tests - Command parsing tests
+├── FileHandlerTest.java       # 41 tests - File I/O tests
+└── TaskManagementConsoleJavaTest.java  # 31 tests - Integration tests
 ```
 
-**TaskManager Class Tests:**
+#### Test Class Template
 ```java
-@Test
-public void testCreateTask() {
-    TaskManager manager = new TaskManager();
-    Task task = manager.createTask("Test", "MEDIUM", "2024-12-31");
-    assertNotNull(task);
-    assertEquals(1, manager.getAllTasks().size());
-}
+package Solution;
 
-@Test
-public void testRemoveTask() {
-    TaskManager manager = new TaskManager();
-    Task task = manager.createTask("Test", "MEDIUM", "2024-12-31");
-    boolean removed = manager.removeTask(task.getId());
-    assertTrue(removed);
-    assertEquals(0, manager.getAllTasks().size());
+import org.junit.Test;
+import org.junit.Before;
+import org.junit.After;
+import static org.junit.Assert.*;
+
+/**
+ * JUnit 4 test class for [Class Name].
+ */
+public class ClassNameTest
+{
+    private ClassName instance;
+    
+    @Before
+    public void setUp()
+    {
+        instance = new ClassName();
+    }
+    
+    @After
+    public void tearDown()
+    {
+        // Cleanup
+    }
+    
+    @Test
+    public void testMethodNameValid()
+    {
+        // Arrange, Act, Assert
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testMethodNameInvalid()
+    {
+        // Test that throws expected exception
+    }
 }
 ```
 
 #### Test Categories
 
-1. **Validation Tests**
-   - Date validation
-   - Priority validation
-   - Status validation
-   - Description validation
+**TaskTest.java (87 tests)**:
+- Task creation with valid parameters
+- Task creation with invalid parameters (null, empty, past dates)
+- Setter validation tests
+- Priority and Status enum conversion tests
+- toString and toCSV format tests
+- CSV parsing and serialization tests
+- ID counter reset tests
 
-2. **Business Logic Tests**
-   - Task creation
-   - Task modification
-   - Task deletion
-   - Task filtering
+**TaskManagerTest.java (46 tests)**:
+- Task creation and retrieval
+- Task updates (status, description, priority, due date)
+- Task removal
+- Task filtering by status
+- Task sorting by due date
+- Task statistics (counts)
+- Error handling for invalid operations
 
-3. **Edge Case Tests**
-   - Boundary date values
-   - Empty and null inputs
-   - Maximum description length
-   - Duplicate operations
+**CommandParserTest.java (42 tests)**:
+- Command parsing with various inputs
+- Argument validation for each command type
+- Error handling for invalid commands
+- ParsedCommand getter tests
+- Complex command parsing scenarios
 
-### Integration Testing
+**FileHandlerTest.java (41 tests)**:
+- File save and load operations
+- CSV format validation
+- Error handling for file operations
+- File existence checking
+- CSV escaping and unescaping
+- Round-trip save/load verification
 
-#### End-to-End Testing Scenarios
+**TaskManagementConsoleJavaTest.java (31 tests)**:
+- Application startup and welcome message
+- Command processing and routing
+- Error message display
+- Console output verification
+- Integration workflow tests
 
-**Scenario 1: Complete Task Lifecycle**
+### Running Tests
+
+#### Maven Test Commands
 ```bash
-# Test script
-create "Integration Test Task", HIGH, 2024-12-31
-list
-update status 1 Doing
-list Doing
-update status 1 Done
-list Done
-remove 1
-list
+# Run all tests
+mvn test
+
+# Run specific test class
+mvn test -Dtest=TaskTest
+
+# Run tests with detailed output
+mvn test -Dmaven.test.failure.ignore=true
+
+# Skip tests during build
+mvn package -DskipTests
 ```
 
-**Scenario 2: File Persistence Cycle**
-1. Create tasks
-2. Exit application
-3. Restart application
-4. Verify tasks reloaded
-5. Modify tasks
-6. Exit and restart
-7. Verify modifications persisted
+#### Test Reports
+- **Location**: `target/surefire-reports/`
+- **Format**: XML and text reports
+- **Content**: Test results, failures, errors, timing
+- **Files**: `TEST-*.xml` and `*.txt` for each test class
 
-#### Performance Testing
+### Test Coverage
 
-**Load Testing:**
+#### Coverage Metrics
+- **Total Tests**: 247 unit tests
+- **Line Coverage**: >90% estimated across all components
+- **Test Distribution**:
+  - Task.java: 87 tests (~95% coverage)
+  - TaskManager.java: 46 tests (~90% coverage)
+  - CommandParser.java: 42 tests (~85% coverage)
+  - FileHandler.java: 41 tests (~80% coverage)
+  - TaskManagementConsoleJava.java: 31 tests (~75% coverage)
+
+#### Test Examples
+
+**Task Creation Tests**:
 ```java
 @Test
-public void testPerformanceWithLargeDataset() {
-    TaskManager manager = new TaskManager();
-    // Create 1000 tasks
-    for (int i = 0; i < 1000; i++) {
-        manager.createTask("Task " + i, "MEDIUM", "2024-12-31");
-    }
-    // Measure list operation time
-    long startTime = System.currentTimeMillis();
-    List<Task> tasks = manager.getAllTasks();
-    long endTime = System.currentTimeMillis();
-    assertTrue((endTime - startTime) < 1000); // Should complete within 1 second
+public void testTaskCreationValid()
+{
+    LocalDate tomorrow = LocalDate.now().plusDays(1);
+    Task task = new Task("Test Task", Task.Priority.MEDIUM, tomorrow);
+    
+    assertNotNull("Task should not be null", task);
+    assertEquals("Description should match", "Test Task", task.getDescription());
+    assertEquals("Priority should be MEDIUM", Task.Priority.MEDIUM, task.getPriority());
+    assertEquals("Due date should be tomorrow", tomorrow, task.getDueDate());
+    assertEquals("Default status should be TODO", Task.Status.TODO, task.getStatus());
+}
+
+@Test(expected = IllegalArgumentException.class)
+public void testTaskCreationPastDueDate()
+{
+    LocalDate yesterday = LocalDate.now().minusDays(1);
+    new Task("Test Task", Task.Priority.MEDIUM, yesterday);
 }
 ```
 
-**Memory Usage Testing:**
+**Command Parsing Tests**:
 ```java
 @Test
-public void testMemoryEfficiency() {
-    Runtime runtime = Runtime.getRuntime();
-    long initialMemory = runtime.totalMemory() - runtime.freeMemory();
+public void testParseCommandWithArguments()
+{
+    CommandParser parser = new CommandParser();
+    ParsedCommand result = parser.parse("create \"Task 1\", HIGH, 2024-12-31");
     
-    TaskManager manager = new TaskManager();
-    for (int i = 0; i < 100; i++) {
-        manager.createTask("Task " + i, "MEDIUM", "2024-12-31");
-    }
+    assertNotNull("Parsed command should not be null", result);
+    assertEquals("Command should be 'create'", "create", result.getCommand());
+    assertEquals("Arguments should match", "\"Task 1\", HIGH, 2024-12-31", result.getArguments());
+}
+```
+
+**File Handler Tests**:
+```java
+@Test
+public void testSaveAndLoadTasks() throws IOException
+{
+    FileHandler fileHandler = new FileHandler();
+    String testFile = "test_tasks.csv";
     
-    long finalMemory = runtime.totalMemory() - runtime.freeMemory();
-    long memoryIncrease = finalMemory - initialMemory;
+    // Create test tasks
+    List<Task> tasks = new ArrayList<>();
+    tasks.add(new Task("Task 1", Task.Priority.LOW, LocalDate.now().plusDays(1)));
+    tasks.add(new Task("Task 2", Task.Priority.MEDIUM, LocalDate.now().plusDays(2)));
     
-    // Each task should use less than 1KB
-    assertTrue(memoryIncrease < 100 * 1024);
+    // Save to file
+    fileHandler.saveTasksToFile(tasks, testFile);
+    
+    // Load from file
+    List<Task> loadedTasks = fileHandler.loadTasksFromFile(testFile);
+    
+    assertEquals("Should load same number of tasks", tasks.size(), loadedTasks.size());
+    
+    // Cleanup
+    Files.deleteIfExists(Paths.get(testFile));
 }
 ```
 
@@ -1136,132 +912,117 @@ public void testMemoryEfficiency() {
 ### Code Organization
 
 #### Package Structure
-```
-Solution/
-├── TaskManagementConsoleJava.java  # Main application controller
-├── Task.java                       # Data model with validation
-├── TaskManager.java                # Business logic core
-├── CommandParser.java              # Input parsing and validation
-└── FileHandler.java                # File I/O operations
-```
+**Main Package**: `Solution`
+- `TaskManagementConsoleJava.java`: Main application controller
+- `Task.java`: Data model with validation
+- `TaskManager.java`: Business logic core
+- `CommandParser.java`: Input parsing and validation
+- `FileHandler.java`: File I/O operations
+
+**Test Package**: `Solution` (under `src/test/java`)
+- `TaskTest.java`: Task entity unit tests
+- `TaskManagerTest.java`: Business logic tests
+- `CommandParserTest.java`: Command parsing tests
+- `FileHandlerTest.java`: File I/O tests
+- `TaskManagementConsoleJavaTest.java`: Integration tests
 
 #### Class Responsibilities
+- **TaskManagementConsoleJava**: Application entry point, user interaction
+- **Task**: Data representation and validation
+- **TaskManager**: Task collection management and business operations
+- **CommandParser**: User input parsing and validation
+- **FileHandler**: File system operations and persistence
 
-**TaskManagementConsoleJava:**
-- Application entry point
-- User interface management
-- Command routing and coordination
-- Session state management
+### Build System
 
-**Task:**
-- Data representation and validation
-- Business rule enforcement
-- CSV serialization/deserialization
-- State management
+#### Maven Configuration
+**pom.xml**:
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-**TaskManager:**
-- Task collection management
-- Business operations
-- Data filtering and sorting
-- Statistics generation
+    <groupId>Naoyuki-Christopher-H</groupId>
+    <artifactId>task-management-console-java</artifactId>
+    <version>V-1.0.0</version>
+    <packaging>jar</packaging>
 
-**CommandParser:**
-- User input parsing
-- Syntax validation
-- Command extraction
-- Argument validation
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <junit.version>4.13.2</junit.version>
+    </properties>
 
-**FileHandler:**
-- File system operations
-- Data persistence
-- Backup management
-- Error handling for I/O operations
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
-### Extension Points
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>Solution.TaskManagementConsoleJava</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.2</version>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+```
 
-#### Adding New Commands
-1. **Extend CommandParser:**
-   ```java
-   public ParsedCommand parse(String input) {
-       // Add new command recognition
-       if (command.equals("search")) {
-           return new ParsedCommand("search", args);
-       }
-   }
-   ```
+#### Build Commands
+```bash
+# Compile only
+mvn compile
 
-2. **Extend TaskManagementConsoleJava:**
-   ```java
-   private void processCommand(String input) {
-       switch (command) {
-           case "search":
-               handleSearchCommand(args);
-               break;
-           // Existing cases...
-       }
-   }
-   ```
+# Run tests
+mvn test
 
-3. **Implement Handler Method:**
-   ```java
-   private void handleSearchCommand(String args) {
-       // Implement search functionality
-   }
-   ```
+# Create JAR package
+mvn package
 
-#### Adding New Task Attributes
-1. **Extend Task Class:**
-   ```java
-   public class Task {
-       private String category; // New attribute
-       
-       // Add getter, setter, validation
-       // Update CSV serialization methods
-       // Update toString() method
-   }
-   ```
-
-2. **Update TaskManager:**
-   ```java
-   public Task updateTaskCategory(int taskId, String category) {
-       // Implement update logic
-   }
-   ```
-
-3. **Update CommandParser:**
-   ```java
-   public String[] validateUpdateCategoryArgs(String args) {
-       // Add validation for new command
-   }
-   ```
-
-#### Customizing File Storage
-1. **Extend FileHandler:**
-   ```java
-   public class CustomFileHandler extends FileHandler {
-       @Override
-       public void saveTasksToFile(List<Task> tasks, String filename) {
-           // Custom storage logic
-       }
-   }
-   ```
-
-2. **Update Application Configuration:**
-   ```java
-   public class TaskManagementConsoleJava {
-       private final FileHandler fileHandler;
-       
-       public TaskManagementConsoleJava() {
-           // Use custom handler
-           this.fileHandler = new CustomFileHandler();
-       }
-   }
-   ```
+# Clean build
+mvn clean package
+```
 
 ### Coding Standards
 
 #### Code Style Requirements
-1. **Allman Style Braces:**
+1. **Allman Style Braces**:
    ```java
    public class Example
    {
@@ -1275,51 +1036,44 @@ Solution/
    }
    ```
 
-2. **Naming Conventions:**
-   - Classes: PascalCase (TaskManager)
-   - Methods: camelCase (createTask)
-   - Variables: camelCase (taskDescription)
-   - Constants: UPPER_SNAKE_CASE (MAX_TASKS)
-   - Enums: PascalCase (Status.TODO)
+2. **Naming Conventions**:
+   - Classes: PascalCase (`TaskManager`)
+   - Methods: camelCase (`createTask`)
+   - Variables: camelCase (`taskDescription`)
+   - Constants: UPPER_SNAKE_CASE (`MAX_TASKS`)
+   - Enums: PascalCase (`Priority.HIGH`)
 
-3. **Documentation Standards:**
+3. **Documentation Standards**:
    - All public methods require Javadoc comments
    - Complex logic requires inline comments
-   - TODO comments for future enhancements
    - Method headers include parameter and return descriptions
 
-4. **Error Handling:**
-   - Use specific exception types
-   - Provide informative error messages
-   - Clean up resources in finally blocks
-   - Validate inputs at method boundaries
+#### Error Handling Standards
+```java
+// Use specific exception types
+throw new IllegalArgumentException("Description cannot be empty");
 
-#### Performance Guidelines
-1. **Memory Management:**
-   - Use primitive types where possible
-   - Implement object pooling for frequently created objects
-   - Clear references to unused objects
-   - Monitor for memory leaks
+// Provide meaningful error messages
+throw new IOException("Failed to save tasks to file: " + filename);
 
-2. **I/O Optimization:**
-   - Use buffered I/O operations
-   - Batch file operations
-   - Implement caching where appropriate
-   - Minimize file locking duration
+// Handle exceptions appropriately
+try
+{
+    fileOperation();
+}
+catch (IOException e)
+{
+    System.err.println("Error: " + e.getMessage());
+    // Continue with default behavior
+}
+```
 
-3. **Algorithm Efficiency:**
-   - Choose appropriate data structures
-   - Implement efficient search algorithms
-   - Cache computation results
-   - Avoid unnecessary object creation in loops
-
-## Performance Optimization
+## Performance Considerations
 
 ### Memory Management
 
 #### Object Creation Patterns
-
-**Task Object Optimization:**
+**Task Object Optimization**:
 ```java
 public class Task
 {
@@ -1331,14 +1085,10 @@ public class Task
     
     // LocalDate is lightweight compared to java.util.Date
     private LocalDate dueDate;
-    
-    // Reuse formatter instances
-    private static final DateTimeFormatter DATE_FORMATTER = 
-        DateTimeFormatter.ofPattern("yyyy-MM-dd");
 }
 ```
 
-**Collection Management:**
+**Collection Management**:
 ```java
 public class TaskManager
 {
@@ -1350,145 +1100,22 @@ public class TaskManager
     {
         tasks = new ArrayList<>(100);  // Initial capacity
     }
-    
-    // Clear references when removing tasks
-    public boolean removeTask(int taskId)
-    {
-        Task task = getTaskById(taskId);
-        if (task != null)
-        {
-            tasks.remove(task);
-            // Task becomes eligible for garbage collection
-            return true;
-        }
-        return false;
-    }
 }
 ```
 
-#### Memory Usage Monitoring
-
-**Task Size Estimation:**
-- Each Task object: approximately 40-60 bytes
-- String descriptions: variable based on length
-- ArrayList overhead: 4 bytes per reference
-- Total memory for 1000 tasks: ~50-100 KB
-
-**Optimization Techniques:**
-1. **String Interning**: Not recommended for user-generated content
-2. **Object Pooling**: Consider for frequently created/destroyed objects
-3. **Lazy Initialization**: Delay creation of expensive objects until needed
-4. **Weak References**: Use for cache-like structures
-
-### I/O Optimization
-
-#### File Operation Strategies
-
-**Buffered Operations:**
-```java
-public class FileHandler
-{
-    // Use buffered readers/writers for efficiency
-    public void saveTasksToFile(List<Task> tasks, String filename) throws IOException
-    {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename)))
-        {
-            for (Task task : tasks)
-            {
-                writer.write(task.toCSV());
-                writer.newLine();
-            }
-        }
-    }
-}
-```
-
-**Batch Processing:**
-```java
-public class TaskManager
-{
-    // Process tasks in batches for large collections
-    public List<Task> getTasksByStatus(String statusStr)
-    {
-        return tasks.stream()
-            .filter(task -> task.getStatus() == status)
-            .collect(Collectors.toList());
-    }
-}
-```
-
-#### Caching Strategies
-
-**Memory Cache Implementation:**
-```java
-public class TaskManager
-{
-    private final List<Task> tasks;
-    private Map<String, List<Task>> statusCache;
-    private boolean cacheInvalid = true;
-    
-    private void rebuildCache()
-    {
-        if (cacheInvalid)
-        {
-            statusCache = tasks.stream()
-                .collect(Collectors.groupingBy(
-                    task -> task.getStatus().toString()
-                ));
-            cacheInvalid = false;
-        }
-    }
-    
-    public List<Task> getTasksByStatus(String statusStr)
-    {
-        rebuildCache();
-        return statusCache.getOrDefault(statusStr, new ArrayList<>());
-    }
-}
-```
-
-**Cache Invalidation:**
-- Invalidate cache on task creation, update, or deletion
-- Consider time-based invalidation for large datasets
-- Implement size-based cache eviction if needed
-
-#### Performance Metrics
-
-**Key Performance Indicators:**
-1. **Startup Time**: < 1 second for 1000 tasks
-2. **Command Response**: < 100ms for typical operations
-3. **File Save Time**: < 500ms for 1000 tasks
-4. **Memory Usage**: < 10MB for 10,000 tasks
-
-**Monitoring Implementation:**
-```java
-public class PerformanceMonitor
-{
-    private long operationStartTime;
-    
-    public void startOperation()
-    {
-        operationStartTime = System.currentTimeMillis();
-    }
-    
-    public void endOperation(String operationName)
-    {
-        long duration = System.currentTimeMillis() - operationStartTime;
-        if (duration > 100)  // Log slow operations
-        {
-            System.out.println(operationName + " took " + duration + "ms");
-        }
-    }
-}
-```
+#### Memory Usage Estimation
+- **Task object**: approximately 40-60 bytes
+- **String descriptions**: variable based on length
+- **ArrayList overhead**: 4 bytes per reference
+- **Total memory for 1000 tasks**: ~50-100 KB
+- **Total memory for 10,000 tasks**: ~500-1000 KB
 
 ## Security Considerations
 
 ### Input Validation
 
 #### Comprehensive Validation Strategy
-
-**Command Input Validation:**
+**Command Input Validation**:
 ```java
 public class CommandParser
 {
@@ -1497,12 +1124,6 @@ public class CommandParser
         if (input == null || input.trim().isEmpty())
         {
             throw new IllegalArgumentException("Command cannot be empty");
-        }
-        
-        // Prevent command injection
-        if (input.contains(";") || input.contains("|") || input.contains("&"))
-        {
-            throw new IllegalArgumentException("Invalid characters in command");
         }
         
         // Limit input length
@@ -1514,7 +1135,7 @@ public class CommandParser
 }
 ```
 
-**Task Data Validation:**
+**Task Data Validation**:
 ```java
 public class Task
 {
@@ -1524,12 +1145,6 @@ public class Task
         if (description == null || description.trim().isEmpty())
         {
             throw new IllegalArgumentException("Description cannot be empty");
-        }
-        
-        // Prevent injection in descriptions
-        if (description.contains("\n") || description.contains("\r"))
-        {
-            throw new IllegalArgumentException("Description contains invalid characters");
         }
         
         // Limit description length
@@ -1558,291 +1173,63 @@ public class Task
             throw new IllegalArgumentException(
                 "Due date cannot be earlier than current date: " + currentDate);
         }
-        
-        // Prevent unreasonably far future dates
-        LocalDate maxDate = currentDate.plusYears(10);
-        if (dueDate.isAfter(maxDate))
-        {
-            throw new IllegalArgumentException(
-                "Due date cannot be more than 10 years in the future");
-        }
-    }
-}
-```
-
-### Data Protection
-
-#### File Security Measures
-
-**File Permission Management:**
-```java
-public class FileHandler
-{
-    public void saveTasksToFile(List<Task> tasks, String filename) throws IOException
-    {
-        // Check file permissions before writing
-        File file = new File(filename);
-        if (file.exists() && !file.canWrite())
-        {
-            throw new IOException("No write permission for file: " + filename);
-        }
-        
-        // Create file with secure permissions
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename)))
-        {
-            // Write data
-        }
-        
-        // Set appropriate file permissions
-        if (!file.setReadable(true, true) || !file.setWritable(true, true))
-        {
-            throw new IOException("Failed to set file permissions");
-        }
-    }
-}
-```
-
-**Sensitive Data Handling:**
-- Task descriptions may contain sensitive information
-- Consider encryption for sensitive deployments
-- Implement secure deletion of temporary files
-- Audit file access patterns
-
-#### Memory Security
-
-**Secure Data Handling in Memory:**
-```java
-public class TaskManager
-{
-    // Consider using char arrays for sensitive data instead of Strings
-    // Strings are immutable and stay in memory until garbage collected
-    // Char arrays can be cleared manually
-    
-    private void handleSensitiveData(char[] sensitiveInfo)
-    {
-        try
-        {
-            // Process sensitive data
-        }
-        finally
-        {
-            // Clear sensitive data from memory
-            Arrays.fill(sensitiveInfo, ' ');
-        }
-    }
-}
-```
-
-**Preventing Information Leakage:**
-1. **Clear Memory**: Overwrite sensitive data in memory after use
-2. **Minimize Exposure**: Only load necessary data into memory
-3. **Secure Logging**: Avoid logging sensitive information
-4. **Error Messages**: Don't leak system information in error messages
-
-#### Access Control Considerations
-
-**Single-User Model:**
-- Application designed for single-user access
-- No authentication mechanism required
-- File permissions provide basic access control
-- Consider multi-user scenarios for future versions
-
-**Audit Trail:**
-```java
-public class AuditLogger
-{
-    private static final String AUDIT_FILE = "task_audit.log";
-    
-    public static void logOperation(String operation, String details)
-    {
-        try (BufferedWriter writer = new BufferedWriter(
-            new FileWriter(AUDIT_FILE, true)))
-        {
-            String timestamp = LocalDateTime.now().toString();
-            writer.write(timestamp + " - " + operation + " - " + details);
-            writer.newLine();
-        }
-        catch (IOException e)
-        {
-            // Don't fail application on audit failure
-            System.err.println("Audit logging failed: " + e.getMessage());
-        }
     }
 }
 ```
 
 ## Troubleshooting Guide
 
-### Common Issues and Solutions
+### Common Issues
 
 #### Application Startup Problems
-
-**Issue: "Java not found" error**
+**Issue**: "Java not found" error
 ```
 Error: 'java' is not recognized as an internal or external command
 ```
-**Solution:**
+**Solution**:
 1. Verify Java installation: `java -version`
 2. Add Java to PATH environment variable
 3. Restart terminal/command prompt
-4. Use full path to java.exe if needed
 
-**Issue: "Main class not found" error**
+**Issue**: "Main class not found" error
 ```
 Error: Could not find or load main class Solution.TaskManagementConsoleJava
 ```
-**Solution:**
+**Solution**:
 1. Verify classpath includes compiled classes
 2. Check package name matches directory structure
 3. Recompile with `mvn clean compile`
-4. Run from project root directory
-
-**Issue: "No suitable JVM found"**
-```
-Error: This application requires a Java Runtime Environment
-```
-**Solution:**
-1. Install Java 8 or higher
-2. Set JAVA_HOME environment variable
-3. Verify 32/64-bit compatibility
-4. Check system architecture matches Java version
 
 #### Runtime Issues
-
-**Issue: Date validation errors**
+**Issue**: Date validation errors
 ```
 Error: Invalid date format. Please use yyyy-MM-dd format
 ```
-**Solution:**
+**Solution**:
 1. Verify date format exactly matches YYYY-MM-DD
 2. Check for leading/trailing spaces
 3. Ensure month and day are valid (01-12, 01-31)
-4. Use quotes around date if needed
 
-**Issue: File permission errors**
+**Issue**: File permission errors
 ```
 Error: Could not save tasks to file: Access denied
 ```
-**Solution:**
+**Solution**:
 1. Check file/folder permissions
 2. Ensure file is not open in another program
 3. Run as administrator if needed
-4. Specify different file location with write permissions
-
-**Issue: Memory-related errors**
-```
-Error: java.lang.OutOfMemoryError
-```
-**Solution:**
-1. Increase JVM heap size: `java -Xmx512m -jar application.jar`
-2. Reduce number of tasks in memory
-3. Check for memory leaks
-4. Restart application periodically for large datasets
 
 #### Data Corruption Issues
-
-**Issue: CSV file corruption**
+**Issue**: CSV file corruption
 ```
 Error parsing line X: Invalid CSV format
 ```
-**Solution:**
+**Solution**:
 1. Backup corrupted file
 2. Open file in text editor to inspect
 3. Look for missing commas or quotes
 4. Remove or fix corrupted lines
 5. Restore from backup if available
-
-**Issue: Task ID conflicts**
-```
-Error: Duplicate task ID detected
-```
-**Solution:**
-1. Manually edit CSV file to fix IDs
-2. Ensure IDs are sequential and unique
-3. Remove duplicate entries
-4. Reset application by deleting tasks.csv
-
-### Diagnostic Procedures
-
-#### Logging and Debug Information
-
-**Enable Debug Mode:**
-Modify TaskManagementConsoleJava.java to add debug logging:
-```java
-private static final boolean DEBUG = true;
-
-private void processCommand(String input)
-{
-    if (DEBUG)
-    {
-        System.out.println("Processing command: " + input);
-    }
-    // Rest of processing
-}
-```
-
-**Collect Diagnostic Information:**
-```bash
-# Collect system information
-java -version
-mvn -version
-systeminfo | findstr /C:"OS Name" /C:"OS Version"  # Windows
-uname -a  # Linux/macOS
-
-# Check file system
-dir tasks.csv  # Windows
-ls -la tasks.csv  # Linux/macOS
-
-# Test Java execution
-java -showversion Solution.TaskManagementConsoleJava
-```
-
-#### Step-by-Step Troubleshooting
-
-**When Application Won't Start:**
-1. Verify Java installation
-2. Check file permissions
-3. Review error messages
-4. Try running from different directory
-5. Check for conflicting Java versions
-
-**When Commands Fail:**
-1. Verify command syntax with `help`
-2. Check for typos in parameters
-3. Ensure required quotes are present
-4. Verify date format
-5. Check task ID exists with `list` command
-
-**When Data is Lost:**
-1. Check for backup files
-2. Look for `tasks.csv.bak` or similar
-3. Check recycle bin/trash
-4. Restore from version control if used
-5. Contact system administrator for file recovery
-
-#### Recovery Procedures
-
-**Complete System Recovery:**
-1. Stop application if running
-2. Backup current data file
-3. Restore from known good backup
-4. Verify file integrity
-5. Restart application
-6. Test basic operations
-
-**Partial Data Recovery:**
-1. Export remaining good data
-2. Manually edit CSV file to remove corruption
-3. Use text editor with CSV validation
-4. Test each line individually
-5. Rebuild missing data from logs or memory
-
-**Preventive Measures:**
-1. Implement regular automated backups
-2. Use version control for data file
-3. Implement data validation on save
-4. Add checksum verification
-5. Maintain audit trail of changes
 
 ## Limitations and Constraints
 
@@ -1854,21 +1241,12 @@ java -showversion Solution.TaskManagementConsoleJava
 - **Performance Impact**: Large datasets may slow down operations
 - **File Size**: CSV file grows linearly with number of tasks
 
-#### File System Limitations
-- **File Size**: Limited by file system (typically 2GB+)
-- **Concurrent Access**: No built-in locking for multi-user access
-- **Network Drives**: Performance may degrade on network storage
-- **File Permissions**: Subject to operating system restrictions
-
 #### Functional Limitations
 - **No Undo/Redo**: Operations cannot be undone
-- **No Versioning**: Task history not maintained
 - **Limited Search**: Basic filtering by status only
 - **No Attachments**: Cannot attach files to tasks
 - **No Notifications**: No reminders or alerts
 - **No Reporting**: Limited statistical information
-
-### Design Constraints
 
 #### User Interface Constraints
 - **Console-Based**: No graphical interface available
@@ -1876,237 +1254,11 @@ java -showversion Solution.TaskManagementConsoleJava
 - **No Mouse Support**: Keyboard-only interaction
 - **Fixed Layout**: Display format cannot be customized
 
-#### Data Model Constraints
-- **Fixed Schema**: Cannot add custom fields without code changes
-- **Limited Relationships**: No task dependencies or hierarchies
-- **Simple Priority**: Only three priority levels
-- **Basic Status**: Only three status states
-
 #### Integration Constraints
 - **Standalone Application**: No API for external integration
 - **File-Based Only**: No database connectivity
 - **No Web Interface**: Local access only
 - **No Mobile Support**: Desktop/laptop only
-
-### Performance Limitations
-
-#### Scalability Constraints
-- **Linear Search**: O(n) complexity for most operations
-- **No Indexing**: No database-style indexing
-- **Memory-Bound**: All operations require full dataset in memory
-- **Single-Threaded**: No parallel processing
-
-#### I/O Limitations
-- **Full File Rewrite**: Entire file rewritten on each save
-- **No Incremental Updates**: Cannot update single tasks in file
-- **Blocking Operations**: File operations block user interface
-- **No Compression**: Data stored as plain text
-
-### Security Limitations
-
-#### Access Control
-- **No Authentication**: Single-user model assumed
-- **No Encryption**: Data stored in plain text
-- **No Audit Trail**: Limited logging of operations
-- **File-Based Security**: Relies on operating system file permissions
-
-#### Data Protection
-- **No Backup Automation**: Manual backup required
-- **No Data Recovery**: Limited recovery options
-- **No Validation on Load**: Malformed data may cause failures
-- **No Integrity Checks**: No checksums or validation
-
-### Environmental Constraints
-
-#### Platform Limitations
-- **Java Dependency**: Requires Java runtime environment
-- **Console Dependency**: Requires functional terminal/console
-- **Character Encoding**: Assumes UTF-8 compatibility
-- **Line Ending Compatibility**: CSV files may have platform-specific line endings
-
-#### Operational Constraints
-- **Manual Installation**: No installer or package manager
-- **Manual Updates**: Code changes required for updates
-- **No Configuration GUI**: Configuration via code or command line
-- **Limited Documentation**: Basic README only
-
-## Future Development Roadmap
-
-### Short-Term Enhancements (Next 3 Months)
-
-#### Priority 1: Core Functionality Improvements
-1. **Advanced Search Capabilities**
-   - Keyword search in task descriptions
-   - Date range filtering
-   - Priority-based filtering
-   - Combined search criteria
-
-2. **Task Sorting Options**
-   - Sort by due date (ascending/descending)
-   - Sort by priority
-   - Sort by creation date
-   - Custom sort orders
-
-3. **Undo/Redo Functionality**
-   - Command history tracking
-   - Undo last operation
-   - Redo undone operations
-   - Multi-level undo support
-
-#### Priority 2: User Experience Enhancements
-1. **Improved Display Formatting**
-   - Column-aligned output
-   - Color-coded priorities
-   - Progress indicators
-   - Customizable display templates
-
-2. **Interactive Mode**
-   - Menu-driven interface option
-   - Command suggestions
-   - Auto-completion
-   - Syntax highlighting
-
-3. **Export/Import Features**
-   - Export to JSON format
-   - Import from CSV/JSON
-   - Backup scheduling
-   - Cloud storage integration
-
-### Medium-Term Enhancements (3-6 Months)
-
-#### Priority 1: Advanced Task Management
-1. **Task Dependencies**
-   - Parent-child relationships
-   - Dependency graphs
-   - Critical path analysis
-   - Blocked task identification
-
-2. **Task Templates**
-   - Reusable task templates
-   - Bulk task creation
-   - Template libraries
-   - Custom template fields
-
-3. **Time Tracking**
-   - Time spent on tasks
-   - Estimates vs actual
-   - Productivity metrics
-   - Timesheet generation
-
-#### Priority 2: Collaboration Features
-1. **Multi-User Support**
-   - User accounts
-   - Permission levels
-   - Task assignment
-   - Change tracking
-
-2. **Commenting System**
-   - Task comments
-   - Change comments
-   - Discussion threads
-   - Notification system
-
-### Long-Term Vision (6-12 Months)
-
-#### Enterprise Features
-1. **Advanced Reporting**
-   - Custom report generation
-   - Chart and graph output
-   - Performance analytics
-   - Trend analysis
-
-2. **Integration Capabilities**
-   - REST API
-   - Web interface
-   - Mobile application
-   - Calendar integration
-
-3. **Advanced Security**
-   - User authentication
-   - Role-based access
-   - Audit logging
-   - Data encryption
-
-#### Scalability Improvements
-1. **Database Backend**
-   - SQL database support
-   - NoSQL options
-   - Data replication
-   - High availability
-
-2. **Performance Optimization**
-   - Caching layer
-   - Asynchronous operations
-   - Load balancing
-   - Distributed processing
-
-### Technical Debt Reduction
-
-#### Code Quality Improvements
-1. **Test Coverage**
-   - Increase unit test coverage to 90%
-   - Add integration tests
-   - Performance testing
-   - Security testing
-
-2. **Code Refactoring**
-   - Extract interfaces
-   - Improve modularity
-   - Reduce duplication
-   - Enhance documentation
-
-3. **Dependency Management**
-   - Update dependencies
-   - Remove deprecated APIs
-   - Standardize libraries
-   - Security patches
-
-#### Developer Experience
-1. **Development Tools**
-   - Improved build scripts
-   - Docker containerization
-   - CI/CD pipeline
-   - Code quality tools
-
-2. **Documentation**
-   - API documentation
-   - Developer guide
-   - Deployment guide
-   - Troubleshooting guide
-
-### Research and Innovation
-
-#### Emerging Technologies
-1. **AI Integration**
-   - Smart task categorization
-   - Predictive due dates
-   - Priority suggestions
-   - Natural language processing
-
-2. **Voice Interface**
-   - Voice command recognition
-   - Voice-to-task creation
-   - Audio feedback
-   - Accessibility features
-
-3. **Blockchain Integration**
-   - Immutable task history
-   - Smart contract automation
-   - Decentralized storage
-   - Verification mechanisms
-
-#### User Research
-1. **Usability Studies**
-   - User behavior analysis
-   - Pain point identification
-   - Feature prioritization
-   - Interface optimization
-
-2. **Market Analysis**
-   - Competitive analysis
-   - Market positioning
-   - Feature gap analysis
-   - Pricing strategy
 
 ## Appendix
 
@@ -2114,14 +1266,14 @@ java -showversion Solution.TaskManagementConsoleJava
 
 #### Command Quick Reference
 
-**Task Creation:**
+**Task Creation**:
 ```
 create "description", priority, yyyy-mm-dd
 create "Buy groceries", LOW, 2024-03-15
 create "Finish report", HIGH, 2024-03-20
 ```
 
-**Task Viewing:**
+**Task Viewing**:
 ```
 list                # Show all tasks
 list "To Do"        # Show pending tasks
@@ -2129,7 +1281,7 @@ list Doing          # Show in-progress tasks
 list Done           # Show completed tasks
 ```
 
-**Task Modification:**
+**Task Modification**:
 ```
 update status 1 Doing        # Change status
 update desc 1 "New text"     # Change description
@@ -2137,24 +1289,18 @@ update priority 1 MEDIUM     # Change priority
 update due 1 2024-04-01      # Change due date
 ```
 
-**Task Deletion:**
+**Task Deletion**:
 ```
 remove 1            # Delete task with ID 1
 delete 2            # Alternative syntax
 ```
 
-**Utility Commands:**
+**Utility Commands**:
 ```
 clear               # Clear screen (also: cls)
 help                # Show help
 exit                # Exit application (also: quit)
 ```
-
-#### Keyboard Shortcuts
-- **Up/Down Arrow**: Command history navigation (if implemented)
-- **Ctrl+C**: Interrupt current operation
-- **Ctrl+D**: End of input (Unix/Linux/macOS)
-- **Ctrl+Z**: Suspend application (Windows)
 
 #### Common Date Formats
 - Today: `2024-03-14`
@@ -2212,39 +1358,16 @@ File Save           | < 100ms             | < 2s
 Memory Usage        | < 1MB               | < 50MB
 ```
 
-#### Error Code Reference
+#### Test Coverage Summary
 ```
-E001: Invalid command syntax
-E002: Invalid date format
-E003: Past due date not allowed
-E004: Invalid priority value
-E005: Invalid status value
-E006: Task not found
-E007: File access error
-E008: Memory allocation error
-E009: Input validation error
-E010: System resource error
-```
-
-#### Contact Information
-- **Repository**: https://github.com/Naoyuki-Christopher-H/task-management-console-java.git
-- **Issues**: GitHub Issues page
-- **Documentation**: This DOCUMENTATION.md file
-- **Support**: GitHub Discussions or Issues
-
-#### Version History
-```
-V-1.0.0 (Current)
-- Initial release
-- Basic CRUD operations
-- File persistence
-- Input validation
-- Console clearing feature
-
-Planned:
-V-1.1.0: Search and sorting enhancements
-V-1.2.0: Export/import features
-V-2.0.0: Database backend support
+Component                  | Tests | Coverage
+---------------------------|-------|----------
+Task.java                  | 87    | ~95%
+TaskManager.java           | 46    | ~90%
+CommandParser.java         | 42    | ~85%
+FileHandler.java           | 41    | ~80%
+TaskManagementConsoleJava  | 31    | ~75%
+Total                      | 247   | ~90%
 ```
 
 ---
