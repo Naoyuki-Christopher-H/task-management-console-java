@@ -412,21 +412,21 @@ mvn install
 
 ```
 task-management-console-java/
-├── src/main/java/Solution/          # Source code
-│   ├── TaskManagementConsoleJava.java  # Main application controller
-│   ├── Task.java                       # Data model with validation
-│   ├── TaskManager.java                # Business logic core
-│   ├── CommandParser.java              # Input parsing and validation
-│   └── FileHandler.java                # File I/O operations
-├── src/test/java/Solution/          # Test source code
-│   ├── TaskTest.java                # 87 tests - Task entity unit tests
-│   ├── TaskManagerTest.java         # 46 tests - Business logic tests
-│   ├── CommandParserTest.java       # 42 tests - Command parsing tests
-│   ├── FileHandlerTest.java         # 41 tests - File I/O tests
-│   └── TaskManagementConsoleJavaTest.java  # 31 tests - Integration tests
-├── pom.xml                          # Maven configuration
-├── tasks.csv                        # Data file (created at runtime)
-└── README.md                        # This documentation file
+├── src/main/java/Solution/                   # Source code
+│   ├── TaskManagementConsoleJava.java        # Main application controller
+│   ├── Task.java                             # Data model with validation
+│   ├── TaskManager.java                      # Business logic core
+│   ├── CommandParser.java                    # Input parsing and validation
+│   └── FileHandler.java                      # File I/O operations
+├── src/test/java/Solution/                   # Test source code
+│   ├── TaskTest.java                         # 87 tests - Task entity unit tests
+│   ├── TaskManagerTest.java                  # 46 tests - Business logic tests
+│   ├── CommandParserTest.java                # 42 tests - Command parsing tests
+│   ├── FileHandlerTest.java                  # 41 tests - File I/O tests
+│   └── TaskManagementConsoleJavaTest.java    # 31 tests - Integration tests
+├── pom.xml                                   # Maven configuration
+├── tasks.csv                                 # Data file (created at runtime)
+└── README.md                                 # This documentation file
 ```
 
 ### Key Classes
