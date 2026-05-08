@@ -1,6 +1,7 @@
 # Task Management Console Application
 
 ## Table of Contents
+
 - [Project Overview](#project-overview)
 - [Features](#features)
 - [System Requirements](#system-requirements)
@@ -17,13 +18,13 @@
 
 ## Project Overview
 
-The Task Management Console Application is a Java-based command-line tool designed for 
-efficient task organization and management. Built with Java 8 and following object-oriented 
-design principles, this application provides a comprehensive solution for creating, tracking, 
+The Task Management Console Application is a Java-based command-line tool designed for
+efficient task organization and management. Built with Java 8 and following object-oriented
+design principles, this application provides a comprehensive solution for creating, tracking,
 and managing tasks through a console interface without external dependencies.
 
-This application is ideal for developers, technical users, and anyone preferring command-line 
-tools for productivity management. It offers robust validation, automatic data persistence, 
+This application is ideal for developers, technical users, and anyone preferring command-line
+tools for productivity management. It offers robust validation, automatic data persistence,
 and a clean, intuitive interface.
 
 **Repository**: https://github.com/Naoyuki-Christopher-H/task-management-console-java.git
