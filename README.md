@@ -545,4 +545,9 @@ When reporting issues, please include:
 6. **Actual Behavior**: What actually happens
 7. **Error Messages**: Complete error output
 
+
+---
+
+END OF DOCUMENT
+
 ---
